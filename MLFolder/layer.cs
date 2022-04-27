@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-public namespace NeuralNetwork{
+using NeuralNetwork;
+namespace NeuralNetwork{
     public class Layer{
         // what below is for identifying
         public int ID;
@@ -8,7 +9,7 @@ public namespace NeuralNetwork{
         public List<neuron> neuronList = new List<neuron>();
         //the constructer
         public Layer(int index){
-            if(NeuronDic.Neurons.ContainsKey(index)){
+            if(LayerDic.Layers.ContainsKey(index)){
             System.Console.WriteLine($"there is a previous layer with specified index:{index}.");
             }else{
               // here, the construction
@@ -32,7 +33,9 @@ public namespace NeuralNetwork{
         void DeleteNeuron(int index){
             if(this.neuronList[index] != null){
                 this.neuronList.Remove(this.neuronList[index]);
-                Refresh(this.neuronList);
+                NeuronDic.Neurons.Remove("neuron" + index + "layer" + this.ID);
+                Refreshing.Refresh(this.neuronList);
+                
             }else{
                 System.Console.WriteLine($"there's no element with specefied idex:{index}");
             }
@@ -40,7 +43,7 @@ public namespace NeuralNetwork{
         
     }
     // the class below is to count all layers
-    public static class LayerDic{
-        public Dictionary<int, Layer> Layers = new Dictionary<int, Layer>();
+    public class LayerDic{
+        public static Dictionary<int, Layer> Layers = new Dictionary<int, Layer>();
     }
 }

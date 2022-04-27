@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using NeuralNetwork;
 //we will put every class in big library and we'll call it "neural network" 
-public namespace NeuralNetwork
+namespace NeuralNetwork
 {
 
     // first construct neuron
     public class neuron {
-      // these are for identifying the neuron
-      private int ID;
+        // these are for identifying the neuron
+      public int ID;
       private int LayerNum;
       private string name;
       // these aren't identifying the neuron
@@ -35,7 +35,7 @@ public namespace NeuralNetwork
     }
 
     // this class is here to count all the neurons
-    public static class NeuronDic{
-         public Dictionary<string,neuron> Neurons = new Dictionary<string, neuron>();
+    public class NeuronDic{
+         public static Dictionary<string,neuron> Neurons = new Dictionary<string, neuron>();
     }
 }
