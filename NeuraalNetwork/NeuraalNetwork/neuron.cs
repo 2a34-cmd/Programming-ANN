@@ -10,7 +10,7 @@ namespace NeuralNetwork
         // these are for identifying the neuron
       public int ID;
       private int LayerNum;
-      private string name;
+      public string name;
       // these aren't identifying the neuron
       private float value;
       private float bias;
