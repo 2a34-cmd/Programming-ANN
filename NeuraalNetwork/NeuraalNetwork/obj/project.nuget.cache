@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NqzOQq1DN9nSgU7T6qSphtisB2LmzAWNuvI64Szx0+YNz8uD2E5qc0VN92L48A8iJ6Pqoapaa5LoeOefU1OmtA==",
+  "dgSpecHash": "UTErdMbsFpd73tyfH7VSUONBXdPWCL5eNNMKCVlbNYIkH7fZ4qvd+ox/DJIwX0BIWHV6UqLUBmRZJ3c+YoGbGQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Khtably55\\Desktop\\MLFolder\\NeuraalNetwork\\NeuraalNetwork\\NeuraalNetwork.csproj",
+  "projectFilePath": "C:\\Users\\Khtably55\\Desktop\\NeuraalNetwork\\NeuraalNetwork\\NeuraalNetwork.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Khtably55\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.13\\microsoft.netcore.app.host.win-x64.5.0.13.nupkg.sha512"
   ],

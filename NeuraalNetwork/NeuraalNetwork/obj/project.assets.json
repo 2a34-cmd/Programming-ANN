@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Khtably55\\Desktop\\MLFolder\\NeuraalNetwork\\NeuraalNetwork\\NeuraalNetwork.csproj",
+      "projectUniqueName": "C:\\Users\\Khtably55\\Desktop\\NeuraalNetwork\\NeuraalNetwork\\NeuraalNetwork.csproj",
       "projectName": "NeuraalNetwork",
-      "projectPath": "C:\\Users\\Khtably55\\Desktop\\MLFolder\\NeuraalNetwork\\NeuraalNetwork\\NeuraalNetwork.csproj",
+      "projectPath": "C:\\Users\\Khtably55\\Desktop\\NeuraalNetwork\\NeuraalNetwork\\NeuraalNetwork.csproj",
       "packagesPath": "C:\\Users\\Khtably55\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Khtably55\\Desktop\\MLFolder\\NeuraalNetwork\\NeuraalNetwork\\obj\\",
+      "outputPath": "C:\\Users\\Khtably55\\Desktop\\NeuraalNetwork\\NeuraalNetwork\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Khtably55\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -5,27 +5,28 @@ namespace NeuralNetwork
     class connector
     {
         //the 2 fields below are identyfing the line between neurons
-        neuron From;
-        neuron To;
+        string From;
+        string To;
+        NeuralNetwork Network;
         string name;
         bool EnableBiasChange;
         //like weight, this is for lerning and application proccess
         float bias;
 
         // the constructer
-        public connector(neuron from, neuron to){
+        public connector(string from, string to, NeuralNetwork network){
             From = from;
             To = to;
-            name = naming(this);
+            Network = network; 
+            name = naming(From,To,Network);
             // I will initialize bias
             bias = 0f;
 
-            //add to Dic
-            connectorDic.Connectors.Add(name, this);
+            //add to ActiveDic
             connectorDic.ActiveConnectors.Add(name, this);
-            System.Console.WriteLine($"a new connector is constructed from {From.name} to {To.name}");
+            System.Console.WriteLine($"a new connector is constructed from {From} to {To} in network {Network.ID}");
         }
-        //I will not build a delete method, instead, I will build clear method that also disable changing bias
+        //I will later build a delete method,but in this time, I will build clear method that also disable changing bias
         public void clear()
         {
             bias = 0f;
@@ -38,9 +39,14 @@ namespace NeuralNetwork
             EnableBiasChange = true;
             connectorDic.ActiveConnectors.Add(name, this);
         }
-        public string naming(connector connector)
+        // There will be delete method
+        public void delete()
         {
-            return $"connector from {connector.From.name} to {connector.To.name}";
+            connectorDic.Connectors.Remove(name);
+        }
+        public static string naming(string from, string to, NeuralNetwork network)
+        {
+            return $"connector from {from} to {to} in network{network.ID}";
         }
 
     }
