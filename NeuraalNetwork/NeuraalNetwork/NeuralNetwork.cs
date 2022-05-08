@@ -8,35 +8,53 @@ namespace NeuralNetwork{
         RNN,
         CNN
     }
+    enum CalcType
+    {
+        Atanh,
+        Sigmoid,
+        ReLU
+    }
     //this class is for networks 
     class NeuralNetwork{
         //that's for keeping track of networks
         public int ID;
         NetworkType type;
+        public CalcType calcType;
         //that's for keeping track of layers
         public List<Layer> layerList = new List<Layer>();
         //and here the constructer
-        public NeuralNetwork()
+        public NeuralNetwork(int id, CalcType calc)
         {
-            NetworkDic.Networks.Add(this, ID);
-            layerList.Add(new Layer(0,ID));
-            type = NetworkType.MLP;
+            if (NetworkDic.Networks.ContainsKey(id))
+            {
+                System.Console.WriteLine($"you can't construct the constructed!!");
+            }
+            else
+            {
+                ID = id;
+                calcType = calc;
+                System.Console.WriteLine($"a new network is constructed with ID {ID}");
+                NetworkDic.Networks.Add(ID,this);
+                AddLayer();
+                type = NetworkType.MLP;
+            }
         }
 
         // addneuron is function to put more neurons in a layer
-        void AddLayer(int index){
-            if(index >= 1){
-            layerList.Add(new Layer(index,ID));
-            }else{ 
-                System.Console.WriteLine("you can't add neuron with index below 1");
+        void AddLayer(int index)
+        {
+            if (index >= 0)
+            {
+                layerList.Add(new Layer(index, ID));
             }
         }
-        void AddLayer()
+        public void AddLayer()
         {
-            AddLayer(layerList.Count +1);
+            AddLayer(layerList.Count);
+            System.Console.WriteLine($"a new layer with ID{layerList.Count - 1} is added to the network {ID}.");
         }
 
-        void connect(neuron from, neuron to)
+        public void connect(Neuron from, Neuron to)
         {
             //highly doubtful about this is working, if so then I'll change class connector as layer and neuron
             connectorDic.Connectors.Add(connector.naming(from.name, to.name, this),
@@ -47,17 +65,17 @@ namespace NeuralNetwork{
             }
         }
         // The method below is for connecting all layers with each other without any jumbing connectors
-        void connectMLPBasic()
+        public void connectMLPBasic()
         {
             foreach (Layer layer in layerList) 
             {
-                if (layer != layerList[layerList.Count])
+                if (layer != layerList[layerList.Count-1])
                 {
                     int i = layerList.FindIndex(a => a.ID == layer.ID);
                     Layer NextLayer = layerList[i + 1];
-                    foreach (neuron from in layer.neuronList)
+                    foreach (Neuron from in layer.neuronList)
                     {
-                        foreach (neuron to in NextLayer.neuronList)
+                        foreach (Neuron to in NextLayer.neuronList)
                         {
                             connect(from, to);
                         }
@@ -80,9 +98,63 @@ namespace NeuralNetwork{
                 System.Console.WriteLine($"there's no element with specefied idex:{index}");
             }
         }
+
+        public void Calculate()
+        {
+            foreach(Layer layer in layerList)
+            {
+                layer.Calculate();
+            }
+        }
+
+        // the function below is for debugging
+        public void InfoLog()
+        {
+            System.Console.WriteLine($"neuralnetwork{ID}");
+            System.Console.WriteLine("structure:");
+            foreach (Layer layer in layerList)
+            {
+                layer.InfoLog();
+            }
+            System.Console.WriteLine("connection:");
+            foreach (connector connector in connectorDic.ActiveConnectors.Values)
+            {
+                connector.InfoLog();
+            }
+        }
+        public void InfowC()
+        {
+
+            System.Console.WriteLine($"neuralnetwork{ID}");
+            System.Console.WriteLine("structure:");
+            foreach (Layer layer in layerList)
+            {
+                layer.InfowC();
+            }
+            System.Console.WriteLine("connection:");
+            foreach (connector connector in connectorDic.ActiveConnectors.Values)
+            {
+                connector.InfoLog();
+            }
+        }
+        public void InfowB()
+        {
+
+            System.Console.WriteLine($"neuralnetwork{ID}");
+            System.Console.WriteLine("structure:");
+            foreach (Layer layer in layerList)
+            {
+                layer.InfowB();
+            }
+            System.Console.WriteLine("connection:");
+            foreach (connector connector in connectorDic.ActiveConnectors.Values)
+            {
+                connector.InfowB();
+            }
+        }
     }
     class NetworkDic
     {
-       public static Dictionary<NeuralNetwork, int> Networks = new Dictionary<NeuralNetwork, int>();
+       public static Dictionary<int, NeuralNetwork> Networks = new Dictionary<int, NeuralNetwork>();
     }
 }
