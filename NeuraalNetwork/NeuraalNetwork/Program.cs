@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NeuralNetwork
+﻿namespace NeuralNetwork
 {
     internal class Program
     {
@@ -16,7 +14,7 @@ namespace NeuralNetwork
             network.connect(network.layerList[0].neuronList[0], network.layerList[2].neuronList[0]);
             network.InfoLog();
             int i = -2;
-            foreach (connector connector in connectorDic.ActiveConnectors.Values)
+            foreach (Connector connector in connectorDic.ActiveConnectors.Values)
             {
                 connector.Change(i);
                 i++;

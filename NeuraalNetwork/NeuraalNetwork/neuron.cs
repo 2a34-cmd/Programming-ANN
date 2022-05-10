@@ -33,8 +33,31 @@ namespace NeuralNetwork
                 NeuronDic.Neurons.Add(Naming(ID, LayerNum, NetworkID),this);
             }
           }
-         //this is for naming neurons
-          static string Naming (int index, int LayerNum, int networkID){
+
+        public Neuron(int index, int layerNum, int networkID, double bais)
+        {
+            // here, we make sure there isn't neuron with the same id
+            if (NeuronDic.Neurons.ContainsKey(Naming(index, layerNum, networkID)))
+            {
+                System.Console.WriteLine($"there is a previous neuron with specified index:{index}" +
+                    $" and Layer index:{LayerNum} from network:{networkID}.");
+            }
+            else
+            {
+                // here, the construction
+                ID = index;
+                LayerNum = layerNum;
+                NetworkID = networkID;
+                bias = bais;
+                value = 0d;
+                name = Naming(ID, LayerNum, NetworkID);
+                System.Console.WriteLine($"A neuron is constructed with index:{ID} and in Layer:{LayerNum}" +
+                    $" in the network:{NetworkID}");
+                NeuronDic.Neurons.Add(Naming(ID, LayerNum, NetworkID), this);
+            }
+        }
+        //this is for naming neurons
+        static string Naming (int index, int LayerNum, int networkID){
             return "neuron" + index + "layer" + LayerNum + "network" + networkID;
           }
           public void InfoLog()
@@ -49,19 +72,20 @@ namespace NeuralNetwork
         {
             Console.WriteLine($"    neuron{ID} :{bias}");
         }
+        public string FileInfo() { return $"nu {ID} : {bias}"; }
         public void Calculate()
         {
             CalcType type = NetworkDic.Networks[NetworkID].calcType;
             double mean = 0;
-            List<connector> connectors = new();
-            foreach (connector connector in connectorDic.ActiveConnectors.Values)
+            List<Connector> connectors = new();
+            foreach (Connector connector in connectorDic.ActiveConnectors.Values)
             {
                 if (connector.To == name)
                 {
                     connectors.Add(connector);
                 }
             }
-            foreach (connector connector in connectors)
+            foreach (Connector connector in connectors)
             {
                 mean += connector.GetWieght() * NeuronDic.Neurons[connector.From].value;
             }

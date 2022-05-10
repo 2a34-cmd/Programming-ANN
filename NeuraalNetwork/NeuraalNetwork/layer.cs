@@ -75,6 +75,16 @@ namespace NeuralNetwork{
                 neuron.InfowB();
             }
         }
+        public List<string> FileInfo()
+        {
+            List<string> data = new();
+            data.Add($"l{ID}");
+            foreach (Neuron neuron in neuronList)
+            {
+                data.Add(neuron.FileInfo());
+            }
+            return data;
+        }
         public void Calculate()
         {
             foreach (Neuron neuron in neuronList)
