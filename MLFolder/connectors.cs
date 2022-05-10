@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace NeuralNetwork
 {
-    class connector
+    class Connector
     {
         //the 2 fields below are identyfing the line between neurons
         public string From;
@@ -14,13 +14,24 @@ namespace NeuralNetwork
         double wieght;
 
         // the constructer
-        public connector(string from, string to, NeuralNetwork network){
+        public Connector(string from, string to, NeuralNetwork network){
             From = from;
             To = to;
             Network = network; 
             name = naming(From,To,Network);
             // I will initialize bias
             wieght = 0f;
+            enableBiasChanging();
+            System.Console.WriteLine($"a new connector is constructed from {From} to {To} in network {Network.ID}");
+        }
+        public Connector(string from, string to, NeuralNetwork network,double w)
+        {
+            From = from;
+            To = to;
+            Network = network;
+            name = naming(From, To, Network);
+            // I will initialize bias
+            wieght = w;
             enableBiasChanging();
             System.Console.WriteLine($"a new connector is constructed from {From} to {To} in network {Network.ID}");
         }
@@ -74,12 +85,17 @@ namespace NeuralNetwork
             string[] t = To.Split(' ')[0].Split(ILLEGALWORDS, StringSplitOptions.RemoveEmptyEntries);
             System.Console.WriteLine($"  connector from [{f[0]},{f[1]}] to [{t[0]},{t[1]}] :{wieght}");
         }
-
+        public string FileInfo()
+        {
+            string[] f = From.Split(' ')[0].Split(ILLEGALWORDS, StringSplitOptions.RemoveEmptyEntries);
+            string[] t = To.Split(' ')[0].Split(ILLEGALWORDS, StringSplitOptions.RemoveEmptyEntries);
+            return$"[{f[0]},{f[1]}][{t[0]},{t[1]}]{wieght}";
+        }
     }
     // like the previous classes, there will be dic
     class connectorDic {
-        public static Dictionary<string, connector> Connectors = new Dictionary<string, connector>();
-        public static Dictionary<string, connector> ActiveConnectors = new Dictionary<string, connector>();
+        public static Dictionary<string, Connector> Connectors = new();
+        public static Dictionary<string, Connector> ActiveConnectors = new();
     }
 
 }
