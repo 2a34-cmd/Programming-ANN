@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace NeuralNetwork
 {
@@ -13,15 +12,24 @@ namespace NeuralNetwork
         {
             Data = new();
             Path = path;
-            foreach (string line in File.ReadAllLines(Path))
+            if (File.Exists(Path))
             {
-                Data.Add(line);
+                foreach (string line in File.ReadAllLines(Path))
+                {
+                    Data.Add(line);
+                }
             }
+            else
+            {
+                File.Create(Path);
+                Data = null;
+            }
+            
         }
 
         void Write(string[] data)
         {
-            Data = null;
+            Data.Clear();
             foreach (string line in data)
             {
                 Data.Add(line);
@@ -31,7 +39,7 @@ namespace NeuralNetwork
 
         void Read()
         {
-            Data = null;
+            Data.Clear();
             foreach (string line in File.ReadLines(Path))
             {
                 Data.Add(line);
@@ -47,7 +55,7 @@ namespace NeuralNetwork
         public void CreateANN()
         {
             Read();
-            for (int i = 0; i < Data.Count-1; i++)
+            for (int i = 0; i < Data.Count; i++)
             {
                 if (Data[i] == "s") state = "s";
                 if (Data[i] == "c") state = "c";
@@ -56,23 +64,23 @@ namespace NeuralNetwork
                     if (Data[i].Contains("net"))
                     {
                         network = Data[i];
-                        networkID = Extractnumbers(network)[0];
-                        calcID = Extractnumbers(network)[1]; 
-                        if(NetworkDic.Networks[networkID] == null)
+                        networkID = extractint(network)[0];
+                        calcID = extractint(network)[1]; 
+                        if(!NetworkDic.Networks.ContainsKey(networkID))
                             NetworkDic.Networks.Add(networkID, new NeuralNetwork(networkID,(CalcType)calcID));
                     }
                     if (Data[i].Contains("l"))
                     {
                         layer = Data[i];
-                        layerNum = Extractnumbers(layer)[0];
+                        layerNum = extractint(layer)[0];
                         NetworkDic.Networks[networkID].layerList.Add(new Layer(layerNum, networkID));
                     }
                     if (Data[i].Contains("nu"))
                     {
                         layername = Layer.Naming(layerNum, networkID);
                         neuron = Data[i];
-                        neuronID = Extractnumbers(neuron)[0];
-                        bias = Extractdoubles(neuron)[1];
+                        neuronID = extractint(neuron)[0];
+                        bias = extractdnum(neuron)[1];
                         LayerDic.Layers[layername].neuronList.Add(new Neuron(neuronID, layerNum, networkID, bias));
                     }
                 }
@@ -81,54 +89,81 @@ namespace NeuralNetwork
                     if (Data[i].Contains("[") && Data[i].Contains("]"))
                     {
                         connoctor = Data[i];
-                        from0 = Extractnumbers(connoctor)[0];
-                        from1 = Extractnumbers(connoctor)[1];
-                        to0 = Extractnumbers(connoctor)[2];
-                        to1 = Extractnumbers(connoctor)[3];
-                        wieght = Extractdoubles(connoctor)[4];
+                        from0 = extractint(connoctor)[0];
+                        from1 = extractint(connoctor)[1];
+                        to0 = extractint(connoctor)[2];
+                        to1 = extractint(connoctor)[3];
+                        wieght = extractdnum(connoctor)[4];
+                        networkID = (int)extractdnum(connoctor)[5];
                         from = NetworkDic.Networks[networkID].layerList[from1].neuronList[from0];
                         to = NetworkDic.Networks[networkID].layerList[to1].neuronList[to0];
                         NetworkDic.Networks[networkID].connect(from, to, wieght);
                     }
                 }
-                calcID = 0; networkID = 0; layerNum = 0; neuronID = 0; from0 = 0; from1 = 0; to0 = 0; to1 = 0;wieght = 0;
-                network = ""; layer = ""; layername = ""; neuron = ""; state = ""; connoctor = "";
-                from = null; to = null;
             }
+            calcID = 0; networkID = 0; layerNum = 0; neuronID = 0; from0 = 0; from1 = 0; to0 = 0; to1 = 0; wieght = 0;
+            network = ""; layer = ""; layername = ""; neuron = ""; state = ""; connoctor = "";
+            from = null; to = null;
         }
-        public void EditFile(NeuralNetwork network)
+        public void EditFile()
         {
-            Write(network.FileInfo().ToArray());
+            Write(NetworkDic.FileInfo().ToArray());
         }
-        static List<int> Extractnumbers(string input) 
+        static List<int> extractint(string input)
         {
-            List<int> number = new();
-            // Split on one or more non-digit characters.
-            string[] numbers = Regex.Split(input, @"\D+");
-            foreach (string value in numbers)
+            List<int> data = new();
+            string parameter = string.Empty;
+            int val = 0;
+            foreach (char IsDigit in input)
             {
-                if (!string.IsNullOrEmpty(value))
+                if (char.IsDigit(IsDigit) || IsDigit == '-')
                 {
-                    int i = int.Parse(value);
-                    number.Add(i);
+                    parameter += IsDigit;
+                }
+                else if (IsDigit == '.')
+                {
+
+                }
+                else
+                {
+                    try 
+                    {
+                        val = int.Parse(parameter);
+                        data.Add(val);
+                    }
+                    catch(System.Exception ex) { System.Console.WriteLine(ex.Message); }
+                    parameter = string.Empty;
+                    val = 0;
                 }
             }
-            return number;
+
+            return data;
         }
-        static List<double> Extractdoubles(string inputd)
+        static List<double> extractdnum(string input)
         {
-            List<double> number = new();
-            // Split on one or more non-digit characters.
-            string[] numbers = Regex.Split(inputd, @"\D+");
-            foreach (string value in numbers)
+            List<double> data = new();
+            string parameter = string.Empty;
+            double val = 0;
+            foreach (char IsDigit in input)
             {
-                if (!string.IsNullOrEmpty(value))
+                if (char.IsDigit(IsDigit) || IsDigit == '-' || IsDigit == '.')
                 {
-                    double i = double.Parse(value);
-                    number.Add(i);
+                    parameter += IsDigit;
+                }
+                else
+                {
+                    try
+                    {
+                        val = double.Parse(parameter);
+                        data.Add(val);
+                    }
+                    catch (System.Exception ex) { System.Console.WriteLine(ex.Message); }
+                    parameter = string.Empty;
+                    val = 0;
                 }
             }
-            return number;
+
+            return data;
         }
     }
 }

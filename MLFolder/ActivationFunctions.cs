@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NeuralNetwork
+﻿namespace NeuralNetwork
 {
     class ActivationFunctions
     {

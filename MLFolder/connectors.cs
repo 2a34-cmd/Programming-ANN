@@ -89,7 +89,7 @@ namespace NeuralNetwork
         {
             string[] f = From.Split(' ')[0].Split(ILLEGALWORDS, StringSplitOptions.RemoveEmptyEntries);
             string[] t = To.Split(' ')[0].Split(ILLEGALWORDS, StringSplitOptions.RemoveEmptyEntries);
-            return$"[{f[0]},{f[1]}][{t[0]},{t[1]}]{wieght}";
+            return$"[{f[0]},{f[1]}][{t[0]},{t[1]}]{wieght}:{Network.ID};";
         }
     }
     // like the previous classes, there will be dic

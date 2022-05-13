@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using NeuralNetwork;
 namespace NeuralNetwork{
     public class Layer{
         // what below is for identifying
@@ -19,7 +17,7 @@ namespace NeuralNetwork{
                 System.Console.WriteLine($"A layer{ID} network{NetworkID} is constructed.");
                 LayerDic.Layers.Add(Naming(index,networkID),this);
                 // I prefer constructing initial neuron for every layer
-                neuronList.Add(new Neuron(0,index, networkID));
+                //neuronList.Add(new Neuron(0, index, networkID));
             }
         }
         // addneuron is function to put more neurons in a layer
@@ -78,7 +76,7 @@ namespace NeuralNetwork{
         public List<string> FileInfo()
         {
             List<string> data = new();
-            data.Add($"l{ID}");
+            data.Add($"l{ID};");
             foreach (Neuron neuron in neuronList)
             {
                 data.Add(neuron.FileInfo());

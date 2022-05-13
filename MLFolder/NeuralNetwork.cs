@@ -4,15 +4,15 @@ namespace NeuralNetwork{
     //the enum below is for different kinds of networks and I'll focus majorly in 3 types
     enum NetworkType
     {
-        MLP,
-        RNN,
-        CNN
+        MLP =1,
+        RNN=2,
+        CNN=3
     }
     enum CalcType
     {
-        Atanh,
-        Sigmoid,
-        ReLU
+        Atanh=1,
+        Sigmoid=2,
+        ReLU=3
     }
     //this class is for networks 
     class NeuralNetwork{
@@ -35,8 +35,8 @@ namespace NeuralNetwork{
                 ID = id;
                 calcType = calc;
                 System.Console.WriteLine($"a new network is constructed with ID {ID}");
-                NetworkDic.Networks.Add(ID, this);
-                AddLayer();
+                //NetworkDic.Networks.Add(ID, this);
+                //AddLayer();
                 type = NetworkType.MLP;
             }
         }
@@ -63,6 +63,8 @@ namespace NeuralNetwork{
             connectorList.Add(connectorDic.Connectors[Connector.naming(from.name, to.name, this)]);
             if(from.LayerNum >= to.LayerNum)
             {
+                Console.WriteLine($"{from.LayerNum}");
+                Console.WriteLine($"{to.LayerNum}");
                 type = NetworkType.RNN;
             }
         }
@@ -73,6 +75,7 @@ namespace NeuralNetwork{
                 new Connector(from.name, to.name, this, w));
             if (from.LayerNum >= to.LayerNum)
             {
+                
                 type = NetworkType.RNN;
             }
         }
@@ -152,7 +155,7 @@ namespace NeuralNetwork{
         public void InfowB()
         {
 
-            System.Console.WriteLine($"neuralnetwork{ID}");
+            System.Console.WriteLine($"neuralnetwork{ID}:{type}:{calcType}");
             System.Console.WriteLine("structure:");
             foreach (Layer layer in layerList)
             {
@@ -168,7 +171,7 @@ namespace NeuralNetwork{
         {
             List<string> data = new();
             data.Add("s");
-            data.Add($"net{ID}");
+            data.Add($"net{ID}:{(int)calcType};");
             foreach (Layer layer in layerList)
             {
                 foreach (string info in layer.FileInfo())
@@ -183,9 +186,52 @@ namespace NeuralNetwork{
             }
             return data;
         }
+        public List<string> StructInfo()
+        {
+            List<string> data = new();
+            data.Add($"net{ID}:{(int) calcType};");
+            foreach (Layer layer in layerList)
+            {
+                foreach (string info in layer.FileInfo())
+                {
+                    data.Add(info);
+                }
+            }
+            return data;
+        }
+        public List<string> ConnectInfo()
+        {
+            List<string> data = new();
+            foreach (Connector connector in connectorList)
+            {
+                data.Add(connector.FileInfo());
+            }
+            return data;
+        }
     }
     class NetworkDic
     {
        public static Dictionary<int, NeuralNetwork> Networks = new();
+       public static List<string> FileInfo()
+       {
+            List<string> data = new();
+            data.Add("s");
+            foreach (NeuralNetwork network in Networks.Values)
+            {
+                foreach (string info in network.StructInfo())
+                {
+                    data.Add(info);
+                }
+            }
+            data.Add("c");
+            foreach (NeuralNetwork network in Networks.Values)
+            {
+                foreach (string info in network.ConnectInfo())
+                {
+                    data.Add(info);
+                }
+            }
+            return data;
+       }
     }
 }

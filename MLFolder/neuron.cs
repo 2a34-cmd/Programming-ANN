@@ -72,7 +72,7 @@ namespace NeuralNetwork
         {
             Console.WriteLine($"    neuron{ID} :{bias}");
         }
-        public string FileInfo() { return $"nu {ID} : {bias}"; }
+        public string FileInfo() { return $"nu {ID} : {bias};"; }
         public void Calculate()
         {
             CalcType type = NetworkDic.Networks[NetworkID].calcType;
