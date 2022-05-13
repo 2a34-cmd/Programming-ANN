@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "zVqbTbik6VsXbAjLz4NoUcYOlSow6MDsr3780LXdDyQi4GCbiWCmzcsuO6Tm0J7AfRIhx53C4KjYwjd606TaUQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Khtably55\\Desktop\\NeuralNetwork\\NeuraalNetwork\\NeuralNetwork.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Khtably55\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.13\\microsoft.netcore.app.host.win-x64.5.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}
