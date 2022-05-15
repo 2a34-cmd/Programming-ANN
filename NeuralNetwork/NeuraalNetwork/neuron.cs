@@ -16,25 +16,25 @@ namespace NeuralNetwork
           public double value;
           public double bias;
            // the constructer should know the ID of neuron
-          public Neuron(int index, int layerNum,int networkID){
-            // here, we make sure there isn't neuron with the same id
-            if(NeuronDic.Neurons.ContainsKey(Naming(index,layerNum,networkID) ) ){
-                System.Console.WriteLine($"there is a previous neuron with specified index:{index}" +
-                    $" and Layer index:{LayerNum} from network:{networkID}.");
-            }else{
-            // here, the construction
-                ID = index;
-                LayerNum = layerNum;
-                NetworkID = networkID;
-                value = 0d; 
-                name = Naming(ID, LayerNum, NetworkID);
-                System.Console.WriteLine($"A neuron is constructed with index:{ID} and in Layer:{LayerNum}" +
-                    $" in the network:{NetworkID}");
-                NeuronDic.Neurons.Add(Naming(ID, LayerNum, NetworkID),this);
-            }
-          }
+          //public Neuron(int index, int layerNum,int networkID){
+          //  // here, we make sure there isn't neuron with the same id
+          //  if(NeuronDic.Neurons.ContainsKey(Naming(index,layerNum,networkID) ) ){
+          //      System.Console.WriteLine($"there is a previous neuron with specified index:{index}" +
+          //          $" and Layer index:{LayerNum} from network:{networkID}.");
+          //  }else{
+          //  // here, the construction
+          //      ID = index;
+          //      LayerNum = layerNum;
+          //      NetworkID = networkID;
+          //      value = 0d; 
+          //      name = Naming(ID, LayerNum, NetworkID);
+          //      System.Console.WriteLine($"A neuron is constructed with index:{ID} and in Layer:{LayerNum}" +
+          //          $" in the network:{NetworkID}");
+          //      NeuronDic.Neurons.Add(Naming(ID, LayerNum, NetworkID),this);
+          //  }
+          //}
 
-        public Neuron(int index, int layerNum, int networkID, double bais)
+        public Neuron(int index, int layerNum, int networkID, double bais = 0)
         {
             // here, we make sure there isn't neuron with the same id
             if (NeuronDic.Neurons.ContainsKey(Naming(index, layerNum, networkID)))
@@ -59,20 +59,13 @@ namespace NeuralNetwork
         //this is for naming neurons
         static string Naming (int index, int LayerNum, int networkID){
             return "neuron" + index + "layer" + LayerNum + "network" + networkID;
-          }
-          public void InfoLog()
-          {
-            System.Console.WriteLine($"    neuron{ID}");
-          }
-        public void InfowC()
-        {
-            Console.WriteLine($"    neuron{ID} :{value}");
         }
-        public void InfowB()
-        {
-            Console.WriteLine($"    neuron{ID} :{bias}");
-        }
+        #region Info Methods
+        public void InfoLog() { System.Console.WriteLine($"    neuron{ID}");}
+        public void InfowC() {Console.WriteLine($"    neuron{ID} :{value}");}
+        public void InfowB(){Console.WriteLine($"    neuron{ID} :{bias}"); }
         public string FileInfo() { return $"nu {ID} : {bias};"; }
+        #endregion
         public void Calculate()
         {
             CalcType type = NetworkDic.Networks[NetworkID].calcType;

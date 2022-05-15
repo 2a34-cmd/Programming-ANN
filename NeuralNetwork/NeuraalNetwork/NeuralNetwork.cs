@@ -20,6 +20,7 @@ namespace NeuralNetwork{
         public int ID;
         NetworkType type;
         public CalcType calcType;
+        public bool IsChangable;
         //that's for keeping track of layers
         public List<Layer> layerList = new();
         List<Connector> connectorList = new();
@@ -38,45 +39,35 @@ namespace NeuralNetwork{
                 //NetworkDic.Networks.Add(ID, this);
                 //AddLayer();
                 type = NetworkType.MLP;
+                IsChangable = true;
             }
         }
 
         // addneuron is function to put more neurons in a layer
         void AddLayer(int index)
         {
-            if (index >= 0)
+            if (index >= 0 && IsChangable)
             {
                 layerList.Add(new Layer(index, ID));
             }
         }
         public void AddLayer()
         {
-            AddLayer(layerList.Count);
-            System.Console.WriteLine($"a new layer with ID{layerList.Count - 1} is added to the network {ID}.");
+                AddLayer(layerList.Count);
+                System.Console.WriteLine($"a new layer with ID{layerList.Count - 1} is added to the network {ID}.");
         }
-
-        public void connect(Neuron from, Neuron to)
+        public void connect(Neuron from, Neuron to, double w = 0)
         {
             //highly doubtful about this is working, if so then I'll change class connector as layer and neuron
-            connectorDic.Connectors.Add(Connector.naming(from.name, to.name, this),
-                new Connector(from.name, to.name, this));
-            connectorList.Add(connectorDic.Connectors[Connector.naming(from.name, to.name, this)]);
-            if(from.LayerNum >= to.LayerNum)
+            if (IsChangable)
             {
-                Console.WriteLine($"{from.LayerNum}");
-                Console.WriteLine($"{to.LayerNum}");
-                type = NetworkType.RNN;
-            }
-        }
-        public void connect(Neuron from, Neuron to,double w)
-        {
-            //highly doubtful about this is working, if so then I'll change class connector as layer and neuron
-            connectorDic.Connectors.Add(Connector.naming(from.name, to.name, this),
+                connectorDic.Connectors.Add(Connector.naming(from.name, to.name, this),
                 new Connector(from.name, to.name, this, w));
-            if (from.LayerNum >= to.LayerNum)
-            {
-                
-                type = NetworkType.RNN;
+                if (from.LayerNum >= to.LayerNum)
+                {
+
+                    type = NetworkType.RNN;
+                }
             }
         }
         // The method below is for connecting all layers with each other without any jumbing connectors
@@ -98,14 +89,9 @@ namespace NeuralNetwork{
                 }
             }
         }
-        // The 2 functions below are refreshing lists because after editting lists, 
-        // the layers or neurons will still have the previous ID and we have to change it
-
-        //this is refresh function
-        
 
         void DeleteLayer(int index){
-            if(layerList[index] != null){
+            if(layerList[index] != null && IsChangable){
                 layerList.Remove(layerList[index]);
                 LayerDic.Layers.Remove(Layer.Naming(index,ID));
                 Refreshing.Refresh(layerList);
@@ -121,7 +107,42 @@ namespace NeuralNetwork{
                 layer.Calculate();
             }
         }
-
+        public void Finilize()
+        {
+            IsChangable = false;
+            layerList[0].type = LayerType.Input;
+            layerList[layerList.Count - 1].type = LayerType.output;
+        }
+        public void neglect()
+        {
+            IsChangable = true;
+            layerList[0].type = LayerType.Hideen;
+            layerList[layerList.Count - 1].type = LayerType.Hideen;
+        }
+        public void EnterVal(List<double> list)
+        {
+            if (!IsChangable)
+            {
+                foreach (Neuron neuron in layerList[0].neuronList)
+                {
+                    neuron.value = list[neuron.ID];
+                }
+            }
+        }
+        public List<double> ExtractVal()
+        {
+            List<double> list = new();
+            List<Neuron> neulist = layerList.Find(x=>x.type==LayerType.output).neuronList;
+            if (!IsChangable)
+            {
+                for (int i=0; i <= neulist.Count -1;i++)
+                {
+                    list.Add(neulist[i].value);
+                }
+            }
+            return list;
+        }
+        #region Info Methods
         // the function below is for debugging
         public void InfoLog()
         {
@@ -208,6 +229,7 @@ namespace NeuralNetwork{
             }
             return data;
         }
+        #endregion
     }
     class NetworkDic
     {
