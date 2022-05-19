@@ -4,7 +4,7 @@ namespace NeuralNetwork{
     {
         Hideen=0,Input=1,output=2
     }
-    public class Layer{
+    class Layer{
         // what below is for identifying
         public int ID;
         int NetworkID;
@@ -45,9 +45,8 @@ namespace NeuralNetwork{
         //deleteneuron is used to remove neuron that are not needed
         public void DeleteNeuron(int index){
             if(neuronList[index] != null && NetworkDic.Networks[NetworkID].IsChangable){
-                neuronList.Remove(this.neuronList[index]);
+                neuronList.Remove(neuronList[index]);
                 NeuronDic.Neurons.Remove("neuron" + index + "layer" + ID);
-               // Refreshing.Refresh(this.neuronList);
                 
             }else{
                 System.Console.WriteLine($"there's no element with specefied idex:{index}");
@@ -98,7 +97,7 @@ namespace NeuralNetwork{
         }
     }
     // the class below is to count all layers
-    public class LayerDic{
+    class LayerDic{
         public static Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
     }
 }

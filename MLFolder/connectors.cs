@@ -7,7 +7,7 @@ namespace NeuralNetwork
         //the 2 fields below are identyfing the line between neurons
         public string From;
         public string To;
-        NeuralNetwork Network;
+        public  NeuralNetwork Network;
         string name;
         bool EnableBiasChange;
         //like weight, this is for lerning and application proccess
