@@ -18,7 +18,8 @@ namespace NeuralNetwork{
     class NeuralNetwork{
         //that's for keeping track of networks
         public int ID;
-        NetworkType type;
+        public double LearningRate;
+        public NetworkType type;
         public CalcType calcType;
         public bool IsChangable;
         //that's for keeping track of layers
@@ -92,9 +93,12 @@ namespace NeuralNetwork{
 
         void DeleteLayer(int index){
             if(layerList[index] != null && IsChangable){
+                for(int i =0;i>layerList[index].neuronList.Count;i++)
+                {
+                    layerList[index].DeleteNeuron(i);
+                }
                 layerList.Remove(layerList[index]);
                 LayerDic.Layers.Remove(Layer.Naming(index,ID));
-                Refreshing.Refresh(layerList);
             }else{
                 System.Console.WriteLine($"there's no element with specefied idex:{index}");
             }
@@ -102,10 +106,61 @@ namespace NeuralNetwork{
 
         public void Calculate()
         {
-            foreach(Layer layer in layerList)
+            if (IsChangable)
+            {
+                Console.WriteLine("You need to finilize the network!");
+                return;
+            }
+            foreach (Layer layer in layerList)
             {
                 layer.Calculate();
             }
+        }
+        public double SquereCost(List<double> Expected)
+        {
+            if (IsChangable) {
+                Console.WriteLine("You need to finilize the network!");
+                return 0;
+            }
+            double Diff;
+            double Sum =0;
+            Calculate();
+            for (int i = 0; i < layerList[layerList.Count-1].neuronList.Count; i++)
+            {
+                Diff = Expected[i] - layerList[layerList.Count - 1].neuronList[i].value;
+                Sum += System.Math.Pow(Diff, 2);
+            }
+            return Sum;
+        }
+        public double SquereCost(List<double> Expected, int index)
+        {
+            if (IsChangable)
+            {
+                Console.WriteLine("You need to finilize the network!");
+                return 0;
+            }
+            double Diff;
+            double Sum;
+            Calculate();
+
+            Diff = Expected[index] - layerList[layerList.Count - 1].neuronList[index].value;
+            Sum = System.Math.Pow(Diff, 2);
+            return Sum;
+        }
+        public double SquereCost(double expected, int index)
+        {
+            if (IsChangable)
+            {
+                Console.WriteLine("You need to finilize the network!");
+                return 0;
+            }
+            double Diff;
+            double Sum;
+            Calculate();
+
+            Diff = expected - layerList[layerList.Count - 1].neuronList[index].value;
+            Sum = System.Math.Pow(Diff, 2);
+            return Sum;
         }
         public void Finilize()
         {
@@ -141,6 +196,29 @@ namespace NeuralNetwork{
                 }
             }
             return list;
+        }
+        public void FindPaths()
+        {
+            List<Path> paths = new List<Path>(PathDic.Paths.Values);
+            List<Path> x = new();
+            foreach (Neuron neuron in layerList[layerList.Count-1].neuronList)
+            {
+                _= new Path(neuron.Root());
+            }
+            for(int i =layerList.Count - 1; i > 0; i--)
+            {
+                foreach(Neuron neuron in layerList[i].neuronList)
+                {
+                    x = paths.FindAll(y => y.from == neuron);
+                    foreach (Connector connector in neuron.Root())
+                    {
+                        foreach (Path path in x)
+                        {
+                            path.NewPath(connector);
+                        }
+                    }
+                }
+            }
         }
         #region Info Methods
         // the function below is for debugging
