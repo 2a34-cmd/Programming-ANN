@@ -1,4 +1,5 @@
-﻿namespace NeuralNetwork
+﻿using System.Collections.Generic;
+namespace NeuralNetwork
 {
     internal class Program
     {
@@ -8,7 +9,17 @@
             string path = @"C:\Users\" + user + @"\Desktop\NeuralNetwork\TestFolder\config.mn1";
             ConfigFile config = new ConfigFile(path);
             config.CreateANN();
+            NetworkDic.Networks[0].Finilize();
+            NetworkDic.Networks[0].FindPaths();
             NetworkDic.Networks[0].InfowB();
+            PathDic.CheckUpsideDown();
+            NetworkDic.Networks[0].FindPaths();
+            //Path.NewPath(connectorDic.Connectors[Connector.naming(NetworkDic.Networks[0].layerList[0].neuronList[0].name,
+            //    NetworkDic.Networks[0].layerList[1].neuronList[0].name, NetworkDic.Networks[0])],
+            //    PathDic.Paths[Path.Naming(NetworkDic.Networks[0].layerList[1].neuronList[0],
+            //    new List<Neuron> { NetworkDic.Networks[0].layerList[1].neuronList[0],
+            //        NetworkDic.Networks[0].layerList[3].neuronList[1] })]);
+            PathDic.InfoOfPaths();
         }
     }
 }

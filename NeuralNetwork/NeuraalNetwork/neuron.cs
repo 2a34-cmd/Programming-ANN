@@ -10,7 +10,7 @@ namespace NeuralNetwork
         // these are for identifying the neuron
           public int ID;
           public int LayerNum;
-          private int NetworkID;
+          public int NetworkID;
           public string name;
           // these aren't identifying the neuron
           public double value;
@@ -103,7 +103,21 @@ namespace NeuralNetwork
             List<Connector> connectors = new();
             foreach (Connector connector in connectorDic.Connectors.Values)
             {
-                if (connector.To == name) connectors.Add(connector);
+                if (connector.To == name) {
+                    connectors.Add(connector); 
+                }
+            }
+            return connectors;
+        }
+        public List<Connector> Tree()
+        {
+            List<Connector> connectors = new();
+            foreach (Connector connector in connectorDic.Connectors.Values)
+            {
+                if (connector.From == name)
+                {
+                    connectors.Add(connector);
+                }
             }
             return connectors;
         }

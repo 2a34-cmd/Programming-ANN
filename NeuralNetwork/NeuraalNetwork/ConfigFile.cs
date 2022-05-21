@@ -126,6 +126,7 @@ namespace NeuralNetwork
                 }
                 else
                 {
+                    if (parameter == "") continue;
                     try 
                     {
                         val = int.Parse(parameter);
@@ -139,6 +140,7 @@ namespace NeuralNetwork
 
             return data;
         }
+        
         static List<double> extractdnum(string input)
         {
             List<double> data = new();
@@ -152,6 +154,7 @@ namespace NeuralNetwork
                 }
                 else
                 {
+                    if (parameter == "") continue;
                     try
                     {
                         val = double.Parse(parameter);

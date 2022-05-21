@@ -18,7 +18,6 @@ namespace NeuralNetwork{
     class NeuralNetwork{
         //that's for keeping track of networks
         public int ID;
-        public double LearningRate;
         public NetworkType type;
         public CalcType calcType;
         public bool IsChangable;
@@ -84,6 +83,7 @@ namespace NeuralNetwork{
                     {
                         foreach (Neuron to in NextLayer.neuronList)
                         {
+                            if (connectorDic.Connectors.ContainsKey($"connector from {from.name} to {to.name} in network{ID}")) continue;
                             connect(from, to);
                         }
                     }
@@ -199,22 +199,59 @@ namespace NeuralNetwork{
         }
         public void FindPaths()
         {
-            List<Path> paths = new List<Path>(PathDic.Paths.Values);
+            if (IsChangable) return;
             List<Path> x = new();
+            List<Path> paths = new();
             foreach (Neuron neuron in layerList[layerList.Count-1].neuronList)
             {
-                _= new Path(neuron.Root());
+                List<Connector> y = new();
+                foreach (Connector connector in neuron.Root())
+                {
+                    y.Clear();
+                    y.Add(connector);
+                    _ = new Path(y);
+                }
             }
-            for(int i =layerList.Count - 1; i > 0; i--)
+            for(int i =layerList.Count - 1; i >= 0; i--)
             {
                 foreach(Neuron neuron in layerList[i].neuronList)
                 {
-                    x = paths.FindAll(y => y.from == neuron);
+                    paths.Clear();
+                    foreach (Path path in PathDic.Paths.Values)
+                    {
+                        paths.Add(path);
+                    }
+                    x = paths.FindAll(z => z.from == neuron);
                     foreach (Connector connector in neuron.Root())
                     {
                         foreach (Path path in x)
                         {
-                            path.NewPath(connector);
+                            Path.NewPath(connector,path);
+                        }
+                    }
+                }
+            }
+        }
+        public void FindPathsfromTree()
+        {
+            if (IsChangable) return;
+            List<Path> x = new();
+            List<Path> paths = new();
+            for (int i = 0; i >= layerList.Count-1; i++)
+            {
+                foreach (Neuron neuron in layerList[i].neuronList)
+                {
+                    paths.Clear();
+                    foreach (Path path in PathDic.Paths.Values)
+                    {
+                        paths.Add(path);
+                    }
+                    x = paths.FindAll(z => z.Out == neuron);
+                    foreach (Connector connector in neuron.Tree())
+                    {
+                        foreach (Path path in x)
+                        {
+                            Path.NewPath(path,connector);
                         }
                     }
                 }

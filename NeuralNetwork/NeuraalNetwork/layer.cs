@@ -47,7 +47,6 @@ namespace NeuralNetwork{
             if(neuronList[index] != null && NetworkDic.Networks[NetworkID].IsChangable){
                 neuronList.Remove(neuronList[index]);
                 NeuronDic.Neurons.Remove("neuron" + index + "layer" + ID);
-                
             }else{
                 System.Console.WriteLine($"there's no element with specefied idex:{index}");
             }
