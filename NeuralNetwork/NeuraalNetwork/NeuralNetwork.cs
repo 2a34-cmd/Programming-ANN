@@ -25,7 +25,7 @@ namespace NeuralNetwork{
         public List<Layer> layerList = new();
         List<Connector> connectorList = new();
         //and here the constructer
-        public NeuralNetwork(int id, CalcType calc)
+        public NeuralNetwork(int id, CalcType calc, bool AddToDic = false)
         {
             if (NetworkDic.Networks.ContainsKey(id))
             {
@@ -35,11 +35,11 @@ namespace NeuralNetwork{
             {
                 ID = id;
                 calcType = calc;
-                System.Console.WriteLine($"a new network is constructed with ID {ID}");
-                //NetworkDic.Networks.Add(ID, this);
-                //AddLayer();
+                Console.WriteLine($"a new network is constructed with ID {ID}");
                 type = NetworkType.MLP;
                 IsChangable = true;
+                if (AddToDic) return;
+                NetworkDic.Networks.Add(ID, this);
             }
         }
 
@@ -54,7 +54,7 @@ namespace NeuralNetwork{
         public void AddLayer()
         {
                 AddLayer(layerList.Count);
-                System.Console.WriteLine($"a new layer with ID{layerList.Count - 1} is added to the network {ID}.");
+                Console.WriteLine($"a new layer with ID{layerList.Count - 1} is added to the network {ID}.");
         }
         public void connect(Neuron from, Neuron to, double w = 0)
         {
@@ -71,7 +71,7 @@ namespace NeuralNetwork{
             }
         }
         // The method below is for connecting all layers with each other without any jumbing connectors
-        public void connectMLPBasic()
+        public void connectMLPBasic(double w = 0)
         {
             foreach (Layer layer in layerList) 
             {
@@ -84,7 +84,28 @@ namespace NeuralNetwork{
                         foreach (Neuron to in NextLayer.neuronList)
                         {
                             if (connectorDic.Connectors.ContainsKey($"connector from {from.name} to {to.name} in network{ID}")) continue;
-                            connect(from, to);
+                            connect(from, to, w);
+                        }
+                    }
+                }
+            }
+        }
+        public void connectMLPBasicRandom()
+        {
+            Random rnd = new();
+            foreach (Layer layer in layerList)
+            {
+                if (layer != layerList[layerList.Count - 1])
+                {
+                    int i = layerList.FindIndex(a => a.ID == layer.ID);
+                    Layer NextLayer = layerList[i + 1];
+                    foreach (Neuron from in layer.neuronList)
+                    {
+                        foreach (Neuron to in NextLayer.neuronList)
+                        {
+                            double w = 0.001 * rnd.Next(-20000, 20000);
+                            if (connectorDic.Connectors.ContainsKey($"connector from {from.name} to {to.name} in network{ID}")) continue;
+                            connect(from, to, w);
                         }
                     }
                 }
@@ -207,7 +228,7 @@ namespace NeuralNetwork{
                 List<Connector> y = new();
                 foreach (Connector connector in neuron.Root())
                 {
-                    y.Clear();
+                    y = new();
                     y.Add(connector);
                     _ = new Path(y);
                 }
@@ -216,11 +237,12 @@ namespace NeuralNetwork{
             {
                 foreach(Neuron neuron in layerList[i].neuronList)
                 {
-                    paths.Clear();
+                    paths = new();
                     foreach (Path path in PathDic.Paths.Values)
                     {
                         paths.Add(path);
                     }
+                    x = new();
                     x = paths.FindAll(z => z.from == neuron);
                     foreach (Connector connector in neuron.Root())
                     {
@@ -232,31 +254,7 @@ namespace NeuralNetwork{
                 }
             }
         }
-        public void FindPathsfromTree()
-        {
-            if (IsChangable) return;
-            List<Path> x = new();
-            List<Path> paths = new();
-            for (int i = 0; i >= layerList.Count-1; i++)
-            {
-                foreach (Neuron neuron in layerList[i].neuronList)
-                {
-                    paths.Clear();
-                    foreach (Path path in PathDic.Paths.Values)
-                    {
-                        paths.Add(path);
-                    }
-                    x = paths.FindAll(z => z.Out == neuron);
-                    foreach (Connector connector in neuron.Tree())
-                    {
-                        foreach (Path path in x)
-                        {
-                            Path.NewPath(path,connector);
-                        }
-                    }
-                }
-            }
-        }
+       
         #region Info Methods
         // the function below is for debugging
         public void InfoLog()
@@ -361,14 +359,49 @@ namespace NeuralNetwork{
                 }
             }
             data.Add("c");
-            foreach (NeuralNetwork network in Networks.Values)
+            foreach (Connector info in connectorDic.ActiveConnectors.Values)
             {
-                foreach (string info in network.ConnectInfo())
-                {
-                    data.Add(info);
-                }
+                data.Add(info.FileInfo());
             }
             return data;
        }
+       public static void RandomNetworks(int numberOfFile = 2)
+        {
+            Random rnd = new();
+            string user = "khtably55";
+            string path = @"C:\Users\" + user + $@"\Desktop\NeuralNetwork\TestFolder\config{numberOfFile}.mn1";
+            ConfigFile config = new ConfigFile(path);
+            int m = rnd.Next(20);
+            for (int n = 0; n < m; n++)
+            {
+                NeuralNetwork network = new NeuralNetwork(n, CalcType.Sigmoid);
+                for (int i = 0; i <= 10; i++)
+                {
+                    network.AddLayer();
+                    int k = rnd.Next(1, 10);
+                    for (int j = 0; j < k; j++)
+                    {
+                        network.layerList[i].AddNeuron();
+                        double b = 0.001 * rnd.Next(-20000, 20000);
+                        network.layerList[i].neuronList[j].bias = b;
+                    }
+                }
+                network.connectMLPBasicRandom();
+                for (int j = 0; j <= 9; j++)
+                {
+                    Layer layer = network.layerList[j];
+                    int i = rnd.Next(0, layer.neuronList.Count - 1);
+                    int k = rnd.Next(j + 1, 10);
+                    int l = rnd.Next(0, network.layerList[k].neuronList.Count - 1);
+                    double w = 0.001 * rnd.Next(-20000, 20000);
+                    if (connectorDic.Connectors.ContainsKey(Connector.naming(network.layerList[j].neuronList[i].name,
+                        network.layerList[k].neuronList[l].name,
+                        network))) continue;
+                    network.connect(network.layerList[j].neuronList[i], network.layerList[k].neuronList[l], w);
+                }
+                network.InfowB();
+            }
+            config.EditFile();
+        }
     }
 }

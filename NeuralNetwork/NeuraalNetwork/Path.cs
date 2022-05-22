@@ -71,18 +71,7 @@ namespace NeuralNetwork
             }
             return false;
         }
-        string Naming()
-        {
-            string str = "path from[" + from.ID +"," + from.LayerNum +"]";
-            foreach(Connector neuron in connectors)
-            {
-                if (NeuronDic.Neurons[neuron.From] == from) continue;
-                str += $"to[{ NeuronDic.Neurons[neuron.To].ID},{ NeuronDic.Neurons[neuron.To].LayerNum}]";
-            }
-            str += $" in network {neurons[0].NetworkID}";
-            return str; 
-        }
-        public static string Naming(Neuron from, List<Neuron> neurons)
+        static string Naming(Neuron from, List<Neuron> neurons)
         {
             string str = "path from[" + from.ID + "," + from.LayerNum + "]";
             foreach (Neuron neuron in neurons)
@@ -111,48 +100,6 @@ namespace NeuralNetwork
                 System.Console.Write($" in network {path.neurons[0].NetworkID}" + '\n');
             }
             System.Console.WriteLine(Paths.Count);
-        }
-        static List<int> extractint(string input)
-        {
-            List<int> data = new();
-            string parameter = string.Empty;
-            int val = 0;
-            foreach (char IsDigit in input)
-            {
-                if (char.IsDigit(IsDigit) || IsDigit == '-')
-                {
-                    parameter += IsDigit;
-                }
-                else if (IsDigit == '.')
-                {
-
-                }
-                else
-                {
-                    if (parameter == "") continue;
-                    try
-                    {
-                        val = int.Parse(parameter);
-                        data.Add(val);
-                    }
-                    catch (System.Exception ex) { System.Console.WriteLine(ex.Message); }
-                    parameter = string.Empty;
-                    val = 0;
-                }
-            }
-
-            return data;
-        }
-        public static void CheckUpsideDown()
-        {
-            List<int> ints = new();
-            foreach (var path in Paths.Values)
-            {
-                ints.Add(extractint(path.Name)[0]);
-                ints.Add(extractint(path.Name)[1]);
-                path.connectors[0].From = $"neuron{ints[0]}layer{ints[1]}network{path.connectors[0].Network.ID}";
-                ints.Clear();
-            }
         }
     }
 }

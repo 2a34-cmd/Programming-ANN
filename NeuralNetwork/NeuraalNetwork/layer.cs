@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 namespace NeuralNetwork{
     public enum LayerType
     {
@@ -14,7 +15,8 @@ namespace NeuralNetwork{
         //the constructer
         public Layer(int index, int networkID){
             if(LayerDic.Layers.ContainsKey(Naming(index,networkID) ) ){
-                System.Console.WriteLine($"there is a previous layer with specified index:{index}.");
+                Console.WriteLine($"there is a previous layer with specified index:{index}.");
+                throw new Exception("You can't do that");
             }else{
               // here, the construction
                 ID = index;
@@ -26,8 +28,8 @@ namespace NeuralNetwork{
         }
         // addneuron is function to put more neurons in a layer
         void AddNeuron(int index){
-            if(index >= 1 && NetworkDic.Networks[NetworkID].IsChangable){
-            this.neuronList.Add(new Neuron(index,ID, NetworkID));
+            if(index >= 0 && NetworkDic.Networks[NetworkID].IsChangable){
+            neuronList.Add(new Neuron(index,ID, NetworkID));
             }else{ 
                 System.Console.WriteLine("you can't add neuron with index below 1");
             }
