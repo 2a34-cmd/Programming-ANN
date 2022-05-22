@@ -4,11 +4,7 @@
     {
         static void Main(string[] args)
         {
-            string user = "khtably55";
-            string path = @"C:\Users\" + user + @"\Desktop\NeuralNetwork\TestFolder\config.mn1";
-            ConfigFile config = new ConfigFile(path);
-            config.CreateANN();
-            NetworkDic.Networks[0].InfowB();
+            NetworkDic.RandomNetworks();
         }
     }
 }
