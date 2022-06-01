@@ -4,7 +4,14 @@
     {
         static void Main(string[] args)
         {
-            NetworkDic.RandomNetworks();
+            string path = @"C:\Users\Khtably55\Desktop\NeuralNetwork\TestFolder\config2.mn1";
+            ConfigFile config = new ConfigFile(path);
+            config.CreateANN();
+            NeuralNetwork network = NetworkDic.Networks[1];
+            network.Finilize();
+            network.FindPaths();
+            network.InfowB();
+            PathDic.InfoOfPaths();
         }
     }
 }

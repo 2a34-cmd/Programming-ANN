@@ -72,6 +72,15 @@ namespace NeuralNetwork
         {
             return $"connector from {from} to {to} in network{network.ID}";
         }
+        //public double? BackProp(double[] Expected)
+        //{
+        //    if (Network.IsChangable) return null;
+        //    double Product = 1;
+        //    Product = (double)NeuronDic.Neurons[From].BackProp(Expected);
+        //    Product *= NeuronDic.Neurons[From].value;
+        //    return Product;
+        //}
+        #region InfoMethods
         char[] ILLEGALWORDS = new char[]{'n','e','u','r','o','l','a','y'};
         public void InfoLog()
         {
@@ -91,6 +100,7 @@ namespace NeuralNetwork
             string[] t = To.Split(' ')[0].Split(ILLEGALWORDS, StringSplitOptions.RemoveEmptyEntries);
             return$"[{f[0]},{f[1]}][{t[0]},{t[1]}]{wieght}:{Network.ID};";
         }
+        #endregion
     }
     // like the previous classes, there will be dic
     class connectorDic {

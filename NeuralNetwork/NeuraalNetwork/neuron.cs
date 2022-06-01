@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NeuralNetwork;
 //we will put every class in big library and we'll call it "neural network" 
 namespace NeuralNetwork
@@ -83,16 +84,37 @@ namespace NeuralNetwork
             }
             return connectors;
         }
-        //public double BackProp(int index)
+        //need more work
+        //public double? BackProp(double[] Expected)
         //{
+        //    if (NetworkDic.Networks[NetworkID].IsChangable) return null;
         //    double Sum = 0;
-        //    foreach (Connector connector in )
+        //    List<Path> paths = (List<Path>)(from n in PathDic.Paths.Values select n);
+        //    List<Path> Tree = paths.FindAll(y => y.from == this);
+        //    foreach (Path path in Tree)
         //    {
-
+        //        double Product = 1;
+        //        foreach (Connector connector in path.connectors)
+        //        {
+        //            Product = 2 * (path.Out.value - Expected[path.Out.ID]);
+        //            Product *= ActivationFunctions.DActivation((connector.GetWieght() * 
+        //                NeuronDic.Neurons[connector.To].value) +
+        //                NeuronDic.Neurons[connector.To].bias,
+        //                NetworkDic.Networks[NetworkID].calcType);
+        //            Product *= connector.GetWieght();
+        //        }
+        //        Sum += Product;
         //    }
         //    return Sum;
         //}
-        
+        //public double? BackPropN(double[] Expected)
+        //{
+        //    if (NetworkDic.Networks[NetworkID].IsChangable) return null;
+        //    double Product = (double)BackProp(Expected);
+
+        //    return Product;
+        //}
+
     }
 
     // this class is here to count all the neurons
