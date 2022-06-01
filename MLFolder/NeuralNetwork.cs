@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
 namespace NeuralNetwork{
     //the enum below is for different kinds of networks and I'll focus majorly in 3 types
     enum NetworkType
@@ -38,8 +41,10 @@ namespace NeuralNetwork{
                 Console.WriteLine($"a new network is constructed with ID {ID}");
                 type = NetworkType.MLP;
                 IsChangable = true;
-                if (AddToDic) return;
-                NetworkDic.Networks.Add(ID, this);
+                if (AddToDic)
+                {
+                    NetworkDic.Networks.Add(ID, this);
+                }
             }
         }
 
@@ -218,8 +223,14 @@ namespace NeuralNetwork{
             }
             return list;
         }
-        public void FindPaths()
+        Stopwatch watch = new Stopwatch();
+        public void FindPaths(bool ForBench = false)
         {
+            if(ForBench)
+            {
+                watch.Start();
+                Console.WriteLine("The timer is on");
+            }
             if (IsChangable) return;
             List<Path> x = new();
             List<Path> paths = new();
@@ -253,8 +264,78 @@ namespace NeuralNetwork{
                     }
                 }
             }
+            if (ForBench)
+            {
+                watch.Stop();
+                Console.WriteLine($"Finding Paths took {watch.ElapsedMilliseconds}millisecond");
+                watch.Reset();
+            }
         }
-       
+        void FindPathTask(int ID, int numberOfFunc, Action<int> func)
+        {
+            if (IsChangable) return;
+            List<Path> x = new();
+            List<Path> paths = new();
+            for (int i = layerList.Count - 1; i >= 0; i--)
+            {
+                int count = layerList[i].neuronList.Count;
+                int div = count / numberOfFunc;
+                int minreminder = div * numberOfFunc;
+                int maxreminder = count;
+                int range = maxreminder - minreminder;
+                List<Neuron> TaskReq = new();
+                for (int j = ID * numberOfFunc; j < (ID + 1) * numberOfFunc; j++)
+                {
+                    TaskReq.Add(layerList[i].neuronList[j]);
+                }
+                if (ID <= range)
+                    TaskReq.Add(layerList[i].neuronList[minreminder + ID]);
+                foreach (Neuron neuron in TaskReq)
+                {
+                    paths = new();
+                    foreach (Path path in PathDic.Paths.Values)
+                    {
+                        paths.Add(path);
+                    }
+                    x = new();
+                    x = paths.FindAll(z => z.from == neuron);
+                    foreach (Connector connector in neuron.Root())
+                    {
+                        foreach (Path path in x)
+                        {
+                            Path.NewPath(connector, path);
+                        }
+                    }
+                }
+                func(ID);
+            }
+        }
+        public void FindPathsAsync(int numberOfFunc,bool ForBench = false)
+        {
+            if (ForBench)
+            {
+                watch.Start(); 
+                Console.WriteLine("The timer is on");
+            }
+            Task[] tasks = new Task[numberOfFunc];
+            void wait(int Id)
+            {
+                for (int i = 0; i < numberOfFunc; i++)
+                    if (i != Id)
+                        tasks[i].Wait();
+            }
+            for(int i =0;i<numberOfFunc;i++)
+            {
+                tasks[i] = Task.Run(() => FindPathTask(i,numberOfFunc,wait));
+            }
+            if(ForBench)
+            {
+                wait(-1);
+                watch.Stop();
+                Console.WriteLine($"Finding Paths took {watch.ElapsedMilliseconds}millisecond");
+                watch.Reset();
+            }
+        }
         #region Info Methods
         // the function below is for debugging
         public void InfoLog()
@@ -365,11 +446,50 @@ namespace NeuralNetwork{
             }
             return data;
        }
-       public static void RandomNetworks(int numberOfFile = 2)
+       public static void RandomNetworks(int numberOfFile = 2,string user = "user")
         {
             Random rnd = new();
-            string user = "khtably55";
-            string path = @"C:\Users\" + user + $@"\Desktop\NeuralNetwork\TestFolder\config{numberOfFile}.mn1";
+            string Path = @"C:\Users\" + user + $@"\Desktop\NeuralNetwork\TestFolder\config{numberOfFile}.mn1";
+            ConfigFile config = new ConfigFile(Path);
+            int m = rnd.Next(20);
+            for (int n = 0; n < m; n++)
+            {
+                NeuralNetwork network = new NeuralNetwork(n, CalcType.Sigmoid);
+                for (int i = 0; i <= 10; i++)
+                {
+                    network.AddLayer();
+                    int k = rnd.Next(1, 10);
+                    for (int j = 0; j < k; j++)
+                    {
+                        network.layerList[i].AddNeuron();
+                        double b = 0.001 * rnd.Next(-20000, 20000);
+                        network.layerList[i].neuronList[j].bias = b;
+                    }
+                }
+                network.connectMLPBasicRandom();
+                int r = rnd.Next(1, 10);
+                for(int a =0;a<= r; a++)
+                {
+                    for (int j = 0; j <= 9; j++)
+                    {
+                        Layer layer = network.layerList[j];
+                        int i = rnd.Next(0, layer.neuronList.Count - 1);
+                        int k = rnd.Next(j + 1, 10);
+                        int l = rnd.Next(0, network.layerList[k].neuronList.Count - 1);
+                        double w = 0.001 * rnd.Next(-20000, 20000);
+                        if (connectorDic.Connectors.ContainsKey(Connector.naming(network.layerList[j].neuronList[i].name,
+                            network.layerList[k].neuronList[l].name,
+                            network))) continue;
+                        network.connect(network.layerList[j].neuronList[i], network.layerList[k].neuronList[l], w);
+                    }
+                }
+                network.InfowB();
+            }
+            config.EditFile();
+        }
+        public static void RandomNetworks(string path = @"C:\Users\user\Desktop\NeuralNetwork\TestFolder\config.mn1")
+        {
+            Random rnd = new();
             ConfigFile config = new ConfigFile(path);
             int m = rnd.Next(20);
             for (int n = 0; n < m; n++)
@@ -387,17 +507,21 @@ namespace NeuralNetwork{
                     }
                 }
                 network.connectMLPBasicRandom();
-                for (int j = 0; j <= 9; j++)
+                int r = rnd.Next(1, 10);
+                for (int a = 0; a <= r; a++)
                 {
-                    Layer layer = network.layerList[j];
-                    int i = rnd.Next(0, layer.neuronList.Count - 1);
-                    int k = rnd.Next(j + 1, 10);
-                    int l = rnd.Next(0, network.layerList[k].neuronList.Count - 1);
-                    double w = 0.001 * rnd.Next(-20000, 20000);
-                    if (connectorDic.Connectors.ContainsKey(Connector.naming(network.layerList[j].neuronList[i].name,
-                        network.layerList[k].neuronList[l].name,
-                        network))) continue;
-                    network.connect(network.layerList[j].neuronList[i], network.layerList[k].neuronList[l], w);
+                    for (int j = 0; j <= 9; j++)
+                    {
+                        Layer layer = network.layerList[j];
+                        int i = rnd.Next(0, layer.neuronList.Count - 1);
+                        int k = rnd.Next(j + 1, 10);
+                        int l = rnd.Next(0, network.layerList[k].neuronList.Count - 1);
+                        double w = 0.001 * rnd.Next(-20000, 20000);
+                        if (connectorDic.Connectors.ContainsKey(Connector.naming(network.layerList[j].neuronList[i].name,
+                            network.layerList[k].neuronList[l].name,
+                            network))) continue;
+                        network.connect(network.layerList[j].neuronList[i], network.layerList[k].neuronList[l], w);
+                    }
                 }
                 network.InfowB();
             }

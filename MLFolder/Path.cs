@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 namespace NeuralNetwork
 {
     class Path
@@ -22,9 +23,11 @@ namespace NeuralNetwork
                 {
                     neurons.Add(NeuronDic.Neurons[connectors[i].To]);
                 }
-                Name = Path.Naming(from,neurons);
-                if (PathDic.Paths.ContainsKey(Name)) return;
-                PathDic.Paths.Add(Name, this);
+                Name = Naming(from,neurons);
+                System.Console.WriteLine($"Path is constructed with name of {Name}");
+                ImmutableDictionary<string, Path> Paths = PathDic.Paths.ToImmutable();
+                if (!Paths.ContainsKey(Name))
+                    PathDic.Paths.Add(Name, this);
             }
             else
             {
@@ -85,7 +88,7 @@ namespace NeuralNetwork
     }
     class PathDic
     {
-        public static Dictionary<string, Path> Paths = new();
+        public static ImmutableDictionary<string,Path>.Builder Paths = ImmutableDictionary.CreateBuilder<string,Path>();
         public static void InfoOfPaths()
         {
             System.Console.WriteLine("Paths:");

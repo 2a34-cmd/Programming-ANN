@@ -25,6 +25,13 @@
                 return 0;
             } 
         }
+        public static double Activation(double x, CalcType type)
+        {
+            if (type == CalcType.Atanh) return Atanh(x);
+            if (type == CalcType.Sigmoid) return Sigmoid(x);
+            if (type == CalcType.ReLU) return ReLU(x);
+            return 0;
+        }
         #endregion
         #region Derivetives
         public static double DAtnh(double x)
@@ -47,6 +54,13 @@
             {
                 return 0;
             }
+        }
+        public static double DActivation(double x,CalcType type)
+        {
+            if (type == CalcType.Atanh) return DAtnh(x);
+            if (type == CalcType.Sigmoid) return DSigmoid(x);
+            if (type == CalcType.ReLU) return DReLU(x);
+            return 0;
         }
         #endregion
 
