@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace NeuralNetwork
+namespace Atomic.ArtificialNeuralNetwork.libraries
 {
     class Connector
     {
@@ -14,17 +14,7 @@ namespace NeuralNetwork
         double wieght;
 
         // the constructer
-        public Connector(string from, string to, NeuralNetwork network){
-            From = from;
-            To = to;
-            Network = network; 
-            name = naming(From,To,Network);
-            // I will initialize bias
-            wieght = 0f;
-            enableBiasChanging();
-            System.Console.WriteLine($"a new connector is constructed from {From} to {To} in network {Network.ID}");
-        }
-        public Connector(string from, string to, NeuralNetwork network,double w)
+        public Connector(string from, string to, NeuralNetwork network,double w = 0f)
         {
             From = from;
             To = to;
@@ -32,6 +22,7 @@ namespace NeuralNetwork
             name = naming(From, To, Network);
             // I will initialize bias
             wieght = w;
+            NeuronDic.Neurons[To].Root.Add(this);
             enableBiasChanging();
             System.Console.WriteLine($"a new connector is constructed from {From} to {To} in network {Network.ID}");
         }
@@ -40,13 +31,12 @@ namespace NeuralNetwork
         {
             wieght = 0f;
             EnableBiasChange = false;
-            connectorDic.ActiveConnectors.Remove(name);
         }
         // The method below is just to enable bias changing
         public void enableBiasChanging()
         {
             EnableBiasChange = true;
-            connectorDic.ActiveConnectors.Add(name, this);
+            connectorDic.Connectors.Add(name, this);
         }
         public void Change(double x)
         {
@@ -105,7 +95,6 @@ namespace NeuralNetwork
     // like the previous classes, there will be dic
     class connectorDic {
         public static Dictionary<string, Connector> Connectors = new();
-        public static Dictionary<string, Connector> ActiveConnectors = new();
     }
 
 }

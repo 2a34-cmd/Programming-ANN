@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Linq;
 
-namespace NeuralNetwork{
+namespace Atomic.ArtificialNeuralNetwork.libraries
+{
     //the enum below is for different kinds of networks and I'll focus majorly in 3 types
     enum NetworkType
     {
@@ -27,6 +30,7 @@ namespace NeuralNetwork{
         //that's for keeping track of layers
         public List<Layer> layerList = new();
         List<Connector> connectorList = new();
+        public ConcurrentBag<Path> PathList = new();
         //and here the constructer
         public NeuralNetwork(int id, CalcType calc, bool AddToDic = false)
         {
@@ -47,7 +51,7 @@ namespace NeuralNetwork{
                 }
             }
         }
-
+        #region Change
         // addneuron is function to put more neurons in a layer
         void AddLayer(int index)
         {
@@ -66,8 +70,7 @@ namespace NeuralNetwork{
             //highly doubtful about this is working, if so then I'll change class connector as layer and neuron
             if (IsChangable)
             {
-                connectorDic.Connectors.Add(Connector.naming(from.name, to.name, this),
-                new Connector(from.name, to.name, this, w));
+                _ = new Connector(from.name, to.name, this, w);
                 if (from.LayerNum >= to.LayerNum)
                 {
 
@@ -223,119 +226,76 @@ namespace NeuralNetwork{
             }
             return list;
         }
+#endregion
         Stopwatch watch = new Stopwatch();
+        public long Serial = 0, Paralleltime = 0; 
         public void FindPaths(bool ForBench = false)
         {
+            if (IsChangable) return;
             if(ForBench)
             {
                 watch.Start();
                 Console.WriteLine("The timer is on");
             }
-            if (IsChangable) return;
-            List<Path> x = new();
-            List<Path> paths = new();
             foreach (Neuron neuron in layerList[layerList.Count-1].neuronList)
             {
                 List<Connector> y = new();
-                foreach (Connector connector in neuron.Root())
+                foreach (Connector connector in neuron.Root)
                 {
-                    y = new();
-                    y.Add(connector);
+                    y = new() { connector };
                     _ = new Path(y);
                 }
             }
             for(int i =layerList.Count - 1; i >= 0; i--)
             {
-                foreach(Neuron neuron in layerList[i].neuronList)
+                foreach(Neuron n in layerList[i].neuronList)
                 {
-                    paths = new();
-                    foreach (Path path in PathDic.Paths.Values)
-                    {
-                        paths.Add(path);
-                    }
-                    x = new();
-                    x = paths.FindAll(z => z.from == neuron);
-                    foreach (Connector connector in neuron.Root())
-                    {
-                        foreach (Path path in x)
-                        {
-                            Path.NewPath(connector,path);
-                        }
-                    }
+                    Path.NewPathsSerial(n.Root, n.paths);
                 }
             }
             if (ForBench)
             {
                 watch.Stop();
                 Console.WriteLine($"Finding Paths took {watch.ElapsedMilliseconds}millisecond");
+                Console.WriteLine("The timer is off");
+                Serial = watch.ElapsedMilliseconds;
                 watch.Reset();
             }
         }
-        void FindPathTask(int ID, int numberOfFunc, Action<int> func)
+        public void FindPathsParallel( bool ForBench = false)
         {
             if (IsChangable) return;
-            List<Path> x = new();
-            List<Path> paths = new();
-            for (int i = layerList.Count - 1; i >= 0; i--)
-            {
-                int count = layerList[i].neuronList.Count;
-                int div = count / numberOfFunc;
-                int minreminder = div * numberOfFunc;
-                int maxreminder = count;
-                int range = maxreminder - minreminder;
-                List<Neuron> TaskReq = new();
-                for (int j = ID * numberOfFunc; j < (ID + 1) * numberOfFunc; j++)
-                {
-                    TaskReq.Add(layerList[i].neuronList[j]);
-                }
-                if (ID <= range)
-                    TaskReq.Add(layerList[i].neuronList[minreminder + ID]);
-                foreach (Neuron neuron in TaskReq)
-                {
-                    paths = new();
-                    foreach (Path path in PathDic.Paths.Values)
-                    {
-                        paths.Add(path);
-                    }
-                    x = new();
-                    x = paths.FindAll(z => z.from == neuron);
-                    foreach (Connector connector in neuron.Root())
-                    {
-                        foreach (Path path in x)
-                        {
-                            Path.NewPath(connector, path);
-                        }
-                    }
-                }
-                func(ID);
-            }
-        }
-        public void FindPathsAsync(int numberOfFunc,bool ForBench = false)
-        {
             if (ForBench)
             {
-                watch.Start(); 
+                watch.Start();
                 Console.WriteLine("The timer is on");
             }
-            Task[] tasks = new Task[numberOfFunc];
-            void wait(int Id)
+            Parallel.ForEach(layerList[layerList.Count - 1].neuronList, (neuron) =>
             {
-                for (int i = 0; i < numberOfFunc; i++)
-                    if (i != Id)
-                        tasks[i].Wait();
+                List<Connector> y = new();
+                foreach (Connector connector in neuron.Root)
+                {
+                    y = new() { connector };
+                    _ = new Path(y);
+                }
+            });
+            for (int i = layerList.Count - 1; i >= 0; i--)
+            {
+                Parallel.ForEach(layerList[i].neuronList, n =>
+                {
+                    Path.NewPathsParallel(n.Root, n.paths);
+                });
             }
-            for(int i =0;i<numberOfFunc;i++)
+            if (ForBench)
             {
-                tasks[i] = Task.Run(() => FindPathTask(i,numberOfFunc,wait));
-            }
-            if(ForBench)
-            {
-                wait(-1);
                 watch.Stop();
                 Console.WriteLine($"Finding Paths took {watch.ElapsedMilliseconds}millisecond");
+                Console.WriteLine("The timer is off");
+                Paralleltime = watch.ElapsedMilliseconds;
                 watch.Reset();
             }
         }
+        
         #region Info Methods
         // the function below is for debugging
         public void InfoLog()
@@ -347,7 +307,7 @@ namespace NeuralNetwork{
                 layer.InfoLog();
             }
             System.Console.WriteLine("connection:");
-            foreach (Connector connector in connectorDic.ActiveConnectors.Values)
+            foreach (Connector connector in connectorDic.Connectors.Values)
             {
                 connector.InfoLog();
             }
@@ -362,7 +322,7 @@ namespace NeuralNetwork{
                 layer.InfowC();
             }
             System.Console.WriteLine("connection:");
-            foreach (Connector connector in connectorDic.ActiveConnectors.Values)
+            foreach (Connector connector in connectorDic.Connectors.Values)
             {
                 connector.InfoLog();
             }
@@ -377,7 +337,7 @@ namespace NeuralNetwork{
                 layer.InfowB();
             }
             System.Console.WriteLine("connection:");
-            foreach (Connector connector in connectorDic.ActiveConnectors.Values)
+            foreach (Connector connector in connectorDic.Connectors.Values)
             {
                 connector.InfowB();
             }
@@ -430,8 +390,7 @@ namespace NeuralNetwork{
        public static Dictionary<int, NeuralNetwork> Networks = new();
        public static List<string> FileInfo()
        {
-            List<string> data = new();
-            data.Add("s");
+            List<string> data = new() { "s" };
             foreach (NeuralNetwork network in Networks.Values)
             {
                 foreach (string info in network.StructInfo())
@@ -440,7 +399,7 @@ namespace NeuralNetwork{
                 }
             }
             data.Add("c");
-            foreach (Connector info in connectorDic.ActiveConnectors.Values)
+            foreach (Connector info in connectorDic.Connectors.Values)
             {
                 data.Add(info.FileInfo());
             }

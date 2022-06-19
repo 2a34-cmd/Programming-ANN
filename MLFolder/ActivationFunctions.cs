@@ -1,4 +1,4 @@
-﻿namespace NeuralNetwork
+﻿namespace Atomic.ArtificialNeuralNetwork.libraries
 {
     class ActivationFunctions
     {

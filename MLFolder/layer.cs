@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
-namespace NeuralNetwork{
+namespace Atomic.ArtificialNeuralNetwork.libraries
+{
     public enum LayerType
     {
         Hideen=0,Input=1,output=2

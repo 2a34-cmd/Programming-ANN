@@ -1,17 +1,62 @@
-﻿namespace NeuralNetwork
+﻿using System.Collections.Generic;
+using System.Threading;
+using Atomic.ArtificialNeuralNetwork.libraries;
+namespace Atomic.NeuralNetworkLib.Driver
 {
     internal class Program
     {
         static void Main(string[] args)
         {
             string path = @"C:\Users\Khtably55\Desktop\NeuralNetwork\TestFolder\config2.mn1";
-            ConfigFile config = new ConfigFile(path);
+            ConfigFile config = new(path);
             config.CreateANN();
             NeuralNetwork network = NetworkDic.Networks[1];
             network.Finilize();
-            network.FindPaths();
+            //network.FirstWork();
+            //ThreadsDic.Initialize(12);
+            //for (int i = 0; i < 12; i++)
+            //{
+            //    if (i < 4) ThreadsDic.threads["Thread" + i].Action = network.DividedWorkOfLayer;
+            //    else ThreadsDic.threads["Thread" + i].Action = network.DividedWorkOfNeuron;
+            //}
+            //List<ParallelProccess> threads = new();
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    threads.Add(ThreadsDic.threads["Thread" + i]);
+            //}
+            //List<List<ParallelProccess>> parallels = new List<List<ParallelProccess>>();
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    parallels.Add(new List<ParallelProccess> { ThreadsDic.threads[$"Thread{i + 4}"], ThreadsDic.threads[$"Thread{i + 8}"] });
+            //}
+
+            //for (int j = 9; j > 7; j--)
+            //{
+            //    List<List<Neuron>> ListofLists = NeuralNetwork.DivideList(network.layerList[j].neuronList, 4);
+            //    for (int i = 0; i < 4; i++)
+            //    {
+            //        threads[i].Start(new Int4
+            //        {
+            //            i = i,
+            //            j = 2,
+            //            k = 4,
+            //            l = j,
+            //            Threads = parallels[i]
+            //        });
+            //    }
+            //    foreach (var thr in threads) thr.Join();
+            //}
+            //foreach (var item in ThreadsDic.threads.Values)
+            //{
+            //    item.Kill();
+            //}
             network.InfowB();
-            PathDic.InfoOfPaths();
+            System.Console.WriteLine("------------------------------------------------------");
+            network.FindPaths(true);
+            System.Console.WriteLine($"Serial   found:{PathDic.Paths.Count} path --  time taken:{network.Serial}");
+            PathDic.Paths.Clear();
+            network.FindPathsParallel(true);
+            System.Console.WriteLine($"Parallel   found:{PathDic.Paths.Count} path --  time taken:{network.Paralleltime}");
         }
     }
 }

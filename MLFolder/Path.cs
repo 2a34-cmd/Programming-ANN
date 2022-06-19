@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-namespace NeuralNetwork
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Concurrent;
+
+namespace Atomic.ArtificialNeuralNetwork.libraries
 {
     class Path
     {
@@ -24,40 +28,51 @@ namespace NeuralNetwork
                     neurons.Add(NeuronDic.Neurons[connectors[i].To]);
                 }
                 Name = Naming(from,neurons);
-                System.Console.WriteLine($"Path is constructed with name of {Name}");
-                ImmutableDictionary<string, Path> Paths = PathDic.Paths.ToImmutable();
-                if (!Paths.ContainsKey(Name))
-                    PathDic.Paths.Add(Name, this);
+                //Console.WriteLine($"Path is constructed with name of {Name}");
+                PathDic.Paths.TryAdd(Name, this);
+                NetworkDic.Networks[from.NetworkID].PathList.Add(this);
+                from.paths.Add(this);
             }
             else
             {
                 return;
             }
         }
-        public static void NewPath(Connector connector,Path path)
+        static void NewPath(Connector connector,Path path)
         {
-            List<Connector> connectors = new();
-            connectors.Add(connector);
-            foreach (Connector connector1 in path.connectors)
-            {
-                connectors.Add(connector1);
-            }
+            List<Connector> connectors = new() { connector };
+            connectors.AddRange(path.connectors);
             if (Check(connectors)) _ = new Path(connectors);
         }
-        public static void NewPath(Path path,Connector connector)
+        
+        static void NewPathsParallel(Connector connector, ConcurrentBag<Path> path)
         {
-            List<Connector> connectors = new();
-            foreach (Connector connector1 in path.connectors)
-            {
-                connectors.Add(connector1);
-            }
-            connectors.Add(connector);
-            if (Check(connectors)) _ = new Path(connectors);
+            Parallel.ForEach(path, p => {
+                NewPath(connector, p);
+            });
         }
-        public void NewPath(Connector connector)
+        static void NewPathsSerial(Connector connector, ConcurrentBag<Path> path)
         {
-            List<Connector> connectors = new();
-            connectors.Add(connector);
+            foreach (var item in path)
+            {
+                NewPath(connector, item);
+            }
+        }
+        public static void NewPathsParallel(List<Connector> connectors, ConcurrentBag<Path> paths)
+        {
+            Parallel.ForEach(connectors, c => {
+                NewPathsParallel(c, paths);
+            });
+        }
+        public static void NewPathsSerial(List<Connector> connectors, ConcurrentBag<Path> paths)
+        {
+            foreach(var c in connectors){
+                NewPathsSerial(c, paths);
+            }
+        }
+        void NewPath(Connector connector)
+        {
+            List<Connector> connectors = new(){ connector};
             connectors.AddRange(this.connectors);
             if (Check(connectors)) _ = new Path(connectors);
         }
@@ -88,21 +103,28 @@ namespace NeuralNetwork
     }
     class PathDic
     {
-        public static ImmutableDictionary<string,Path>.Builder Paths = ImmutableDictionary.CreateBuilder<string,Path>();
-        public static void InfoOfPaths()
+        public static ConcurrentDictionary<string, Path> Paths = new();
+        //public static ImmutableDictionary<string,Path>.Builder Paths = ImmutableDictionary.CreateBuilder<string,Path>();
+        public static void InfoOfPaths(string s = "", bool Ordered = false)
         {
-            System.Console.WriteLine("Paths:");
-            foreach (Path path in Paths.Values)
+            Action<string> Invoked = (string str) =>
             {
-                System.Console.Write($"  Path from [{path.from.ID},{path.from.LayerNum}] ");
+                Console.Write(s);
+                Console.Write(str);
+            };
+            Invoked("Paths:");
+            Console.WriteLine();
+            foreach (Path path in Paths.Values.OrderBy(p => p.Name))
+            {
+                Invoked($"  Path from [{path.from.ID},{path.from.LayerNum}]");
                 foreach (var neuron in path.neurons)
                 {
                     if (neuron == path.from) continue;
-                    System.Console.Write($"to[{neuron.ID},{neuron.LayerNum}]");
+                    Console.Write($"to[{neuron.ID},{neuron.LayerNum}]");
                 }
-                System.Console.Write($" in network {path.neurons[0].NetworkID}" + '\n');
+                Console.Write($" in network {path.neurons[0].NetworkID}" + '\n');
             }
-            System.Console.WriteLine(Paths.Count);
+            Invoked(Paths.Count.ToString());
         }
     }
 }
