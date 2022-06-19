@@ -227,9 +227,9 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
             return list;
         }
 #endregion
-        Stopwatch watch = new Stopwatch();
+        Stopwatch watch = new();
         public long Serial = 0, Paralleltime = 0; 
-        public void FindPaths(bool ForBench = false)
+        public void FindPaths(bool ForBench = false, int Until = 0)
         {
             if (IsChangable) return;
             if(ForBench)
@@ -246,7 +246,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
                     _ = new Path(y);
                 }
             }
-            for(int i =layerList.Count - 1; i >= 0; i--)
+            for(int i =layerList.Count - 1; i >= Until; i--)
             {
                 foreach(Neuron n in layerList[i].neuronList)
                 {
@@ -262,7 +262,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
                 watch.Reset();
             }
         }
-        public void FindPathsParallel( bool ForBench = false)
+        public void FindPathsParallel( bool ForBench = false, int until = 0)
         {
             if (IsChangable) return;
             if (ForBench)
@@ -279,7 +279,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
                     _ = new Path(y);
                 }
             });
-            for (int i = layerList.Count - 1; i >= 0; i--)
+            for (int i = layerList.Count - 1; i >= until; i--)
             {
                 Parallel.ForEach(layerList[i].neuronList, n =>
                 {
