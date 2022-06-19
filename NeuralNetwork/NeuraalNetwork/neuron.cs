@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using NeuralNetwork;
+using System.Collections.Concurrent;
 //we will put every class in big library and we'll call it "neural network" 
-namespace NeuralNetwork
+namespace Atomic.ArtificialNeuralNetwork.libraries
 {
 
     // first construct neuron
@@ -13,6 +12,8 @@ namespace NeuralNetwork
         public int LayerNum;
         public int NetworkID;
         public string name;
+        public ConcurrentBag<Path> paths;
+        public List<Connector> Root;
         // these aren't identifying the neuron
         public double value;
         public double bias;
@@ -32,6 +33,8 @@ namespace NeuralNetwork
                 ID = index;
                 LayerNum = layerNum;
                 NetworkID = networkID;
+                paths = new();
+                Root = new();
                 bias = bais;
                 value = 0d;
                 calc = NetworkDic.Networks[networkID].calcType;
@@ -56,7 +59,7 @@ namespace NeuralNetwork
             CalcType type = NetworkDic.Networks[NetworkID].calcType;
             double mean = 0;
             List<Connector> connectors = new();
-            foreach (Connector connector in connectorDic.ActiveConnectors.Values)
+            foreach (Connector connector in connectorDic.Connectors.Values)
             {
                 if (connector.To == name)
                 {
@@ -73,18 +76,9 @@ namespace NeuralNetwork
             if (type == CalcType.Sigmoid) value = ActivationFunctions.Sigmoid(mean);
             return;
         }
-        public List<Connector> Root()
-        {
-            List<Connector> connectors = new();
-            foreach (Connector connector in connectorDic.Connectors.Values)
-            {
-                if (connector.To == name) {
-                    connectors.Add(connector); 
-                }
-            }
-            return connectors;
-        }
         //need more work
+
+
         //public double? BackProp(double[] Expected)
         //{
         //    if (NetworkDic.Networks[NetworkID].IsChangable) return null;

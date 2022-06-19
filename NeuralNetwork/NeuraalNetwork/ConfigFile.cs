@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace NeuralNetwork
+namespace Atomic.ArtificialNeuralNetwork.libraries
 {
     class ConfigFile
     {
@@ -14,10 +15,7 @@ namespace NeuralNetwork
             Path = path;
             if (File.Exists(Path))
             {
-                foreach (string line in File.ReadAllLines(Path))
-                {
-                    Data.Add(line);
-                }
+                ReadFile();
             }
             else
             {
@@ -27,23 +25,21 @@ namespace NeuralNetwork
             
         }
 
-        void Write(string[] data)
+        async Task Write(string[] data)
         {
             Data.Clear();
-            foreach (string line in data)
-            {
-                Data.Add(line);
-            }
-            File.WriteAllLines(Path, Data.ToArray());
+            Data.AddRange(data);
+            await File.WriteAllLinesAsync(Path, Data.ToArray());
         }
 
-        void Read()
+        async Task Read()
         {
             Data.Clear();
-            foreach (string line in File.ReadLines(Path))
-            {
-                Data.Add(line);
-            }
+            Data.AddRange(await File.ReadAllLinesAsync(Path));
+        }
+        void ReadFile()
+        {
+            Task.Run(async () => await Read()).Wait();
         }
         #region dummy
         //these are dummy varibles
@@ -54,62 +50,77 @@ namespace NeuralNetwork
         #endregion
         public void CreateANN()
         {
-            Read();
+            ReadFile();
             for (int i = 0; i < Data.Count; i++)
             {
-                if (Data[i] == "s") state = "s";
-                if (Data[i] == "c") state = "c";
-                if (state == "s")
+                switch (Data[i])
                 {
-                    if (Data[i].Contains("net"))
-                    {
-                        network = Data[i];
-                        networkID = extractint(network)[0];
-                        calcID = extractint(network)[1]; 
-                        if(!NetworkDic.Networks.ContainsKey(networkID))
-                            NetworkDic.Networks.Add(networkID, new NeuralNetwork(networkID,(CalcType)calcID));
-                    }
-                    if (Data[i].Contains("l"))
-                    {
-                        layer = Data[i];
-                        layerNum = extractint(layer)[0];
-                        NetworkDic.Networks[networkID].layerList.Add(new Layer(layerNum, networkID));
-                    }
-                    if (Data[i].Contains("nu"))
-                    {
-                        layername = Layer.Naming(layerNum, networkID);
-                        neuron = Data[i];
-                        neuronID = extractint(neuron)[0];
-                        bias = extractdnum(neuron)[1];
-                        LayerDic.Layers[layername].neuronList.Add(new Neuron(neuronID, layerNum, networkID, bias));
-                    }
-                }
-                if (state == "c")
-                {
-                    if (Data[i].Contains("[") && Data[i].Contains("]"))
-                    {
-                        connoctor = Data[i];
-                        from0 = extractint(connoctor)[0];
-                        from1 = extractint(connoctor)[1];
-                        to0 = extractint(connoctor)[2];
-                        to1 = extractint(connoctor)[3];
-                        wieght = extractdnum(connoctor)[4];
-                        networkID = (int)extractdnum(connoctor)[5];
-                        from = NetworkDic.Networks[networkID].layerList[from1].neuronList[from0];
-                        to = NetworkDic.Networks[networkID].layerList[to1].neuronList[to0];
-                        NetworkDic.Networks[networkID].connect(from, to, wieght);
-                    }
+                    case "s":
+                        state = "s";
+                        break;
+                    case "c":
+                        state = "c";
+                        break;
+                    default:
+                        switch (state)
+                        {
+                            case "s":
+                                switch (Data[i])
+                                {
+                                    case string a when a.Contains("net"):
+                                        network = Data[i];
+                                        networkID = Extractint(network)[0];
+                                        calcID = Extractint(network)[1];
+                                        if (!NetworkDic.Networks.ContainsKey(networkID))
+                                            NetworkDic.Networks.Add(networkID, new NeuralNetwork(networkID, (CalcType)calcID));
+                                        break;
+                                    case string a when a.Contains("l"):
+                                        layer = Data[i];
+                                        layerNum = Extractint(layer)[0];
+                                        NetworkDic.Networks[networkID].layerList.Add(new Layer(layerNum, networkID));
+                                        break;
+                                    case string a when a.Contains("nu"):
+                                        layername = Layer.Naming(layerNum, networkID);
+                                        neuron = Data[i];
+                                        neuronID = Extractint(neuron)[0];
+                                        bias = Extractdnum(neuron)[1];
+                                        LayerDic.Layers[layername].neuronList.Add(new Neuron(neuronID, layerNum, networkID, bias));
+                                        break;
+                                }
+                                break;
+                            case "c":
+                                switch (Data[i])
+                                {
+                                    case string a when a.Contains("[") && a.Contains("]"):
+                                        connoctor = Data[i];
+                                        from0 = Extractint(connoctor)[0];
+                                        from1 = Extractint(connoctor)[1];
+                                        to0 = Extractint(connoctor)[2];
+                                        to1 = Extractint(connoctor)[3];
+                                        wieght = Extractdnum(connoctor)[4];
+                                        networkID = (int)Extractdnum(connoctor)[5];
+                                        from = NetworkDic.Networks[networkID].layerList[from1].neuronList[from0];
+                                        to = NetworkDic.Networks[networkID].layerList[to1].neuronList[to0];
+                                        NetworkDic.Networks[networkID].connect(from, to, wieght);
+                                        break;
+                                }
+                                break;
+                        }
+                        break;
+
                 }
             }
+            #region Defultation
             calcID = 0; networkID = 0; layerNum = 0; neuronID = 0; from0 = 0; from1 = 0; to0 = 0; to1 = 0; wieght = 0;
             network = ""; layer = ""; layername = ""; neuron = ""; state = ""; connoctor = "";
             from = null; to = null;
+            #endregion
         }
         public void EditFile()
         {
-            Write(NetworkDic.FileInfo().ToArray());
+            Task.Run(async ()=> await Write(NetworkDic.FileInfo().ToArray())).Wait();
         }
-        static List<int> extractint(string input)
+        static List<int> Extractint(string input)
         {
             List<int> data = new();
             string parameter = string.Empty;
@@ -141,7 +152,7 @@ namespace NeuralNetwork
             return data;
         }
         
-        static List<double> extractdnum(string input)
+        static List<double> Extractdnum(string input)
         {
             List<double> data = new();
             string parameter = string.Empty;

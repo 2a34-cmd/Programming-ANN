@@ -3,7 +3,6 @@ C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\bin\Debug\net5.0\NeuralN
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\bin\Debug\net5.0\NeuralNetwork.runtimeconfig.json
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\bin\Debug\net5.0\NeuralNetwork.runtimeconfig.dev.json
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\bin\Debug\net5.0\NeuralNetwork.dll
-C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\bin\Debug\net5.0\ref\NeuralNetwork.dll
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\bin\Debug\net5.0\NeuralNetwork.pdb
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\obj\Debug\net5.0\NeuralNetwork.csproj.AssemblyReference.cache
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\obj\Debug\net5.0\NeuralNetwork.GeneratedMSBuildEditorConfig.editorconfig
@@ -14,3 +13,4 @@ C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\obj\Debug\net5.0\NeuralN
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\obj\Debug\net5.0\ref\NeuralNetwork.dll
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\obj\Debug\net5.0\NeuralNetwork.pdb
 C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\obj\Debug\net5.0\NeuralNetwork.genruntimeconfig.cache
+C:\Users\Khtably55\Desktop\NeuralNetwork\NeuraalNetwork\obj\Debug\net5.0\refint\NeuralNetwork.dll
