@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <StartupObject>Atomic.NeuralNetworkLib.Driver.Program</StartupObject>
+    <StartupObject>Atomic.ArtificialNeuralNetwork.Driver.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

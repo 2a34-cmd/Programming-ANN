@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Atomic.ArtificialNeuralNetwork.libraries
 {
-    class Connector
+    class Connector //: IWeightBias
     {
         //the 2 fields below are identyfing the line between neurons
         public string From;
@@ -11,10 +11,10 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         string name;
         bool EnableBiasChange;
         //like weight, this is for lerning and application proccess
-        double wieght;
+        decimal wieght;
 
         // the constructer
-        public Connector(string from, string to, NeuralNetwork network,double w = 0f)
+        public Connector(string from, string to, NeuralNetwork network,decimal w = 0m)
         {
             From = from;
             To = to;
@@ -23,13 +23,14 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
             // I will initialize bias
             wieght = w;
             NeuronDic.Neurons[To].Root.Add(this);
+            //network.WBList.Add(this);
             enableBiasChanging();
-            System.Console.WriteLine($"a new connector is constructed from {From} to {To} in network {Network.ID}");
+            Console.WriteLine($"a new connector is constructed from {From} to {To} in network {Network.ID}");
         }
         //I will later build a delete method,but in this time, I will build clear method that also disable changing bias
         public void clear()
         {
-            wieght = 0f;
+            wieght = 0m;
             EnableBiasChange = false;
         }
         // The method below is just to enable bias changing
@@ -38,7 +39,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
             EnableBiasChange = true;
             connectorDic.Connectors.Add(name, this);
         }
-        public void Change(double x)
+        public void Change(decimal x)
         {
             if (EnableBiasChange == false)
             {
@@ -49,7 +50,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
                 wieght = x;
             }
         }
-        public double GetWieght()
+        public decimal GetWieght()
         {
             return wieght;
         }
@@ -62,14 +63,21 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         {
             return $"connector from {from} to {to} in network{network.ID}";
         }
-        //public double? BackProp(double[] Expected)
+        //public decimal? BackProp(decimal[] Expected)
         //{
         //    if (Network.IsChangable) return null;
-        //    double Product = 1;
-        //    Product = (double)NeuronDic.Neurons[From].BackProp(Expected);
+        //    decimal Product = (decimal)NeuronDic.Neurons[To].BackProp(Expected);
         //    Product *= NeuronDic.Neurons[From].value;
         //    return Product;
         //}
+        //public void SetWB(decimal[] Expected)
+        //{
+        //    wieght -= Network.LearningRate * (decimal)BackProp(Expected);
+        //}
+        public void SetWB(decimal diff)
+        {
+            wieght -= diff;
+        }
         #region InfoMethods
         char[] ILLEGALWORDS = new char[]{'n','e','u','r','o','l','a','y'};
         public void InfoLog()

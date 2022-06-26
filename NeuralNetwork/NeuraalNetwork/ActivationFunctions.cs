@@ -2,19 +2,19 @@
 {
     class ActivationFunctions
     {
-        static double y;
+        static decimal y;
         #region AFunction
-        public static double Atanh(double x)
+        public static decimal Tanh(decimal x)
         {
-            y = System.Math.Atanh(x);
+            y = DecimalMath.Tanh(x);
             return y;
         }
-        public static double Sigmoid(double x)
+        public static decimal Sigmoid(decimal x)
         {
-            y = 1/(1+ System.Math.Exp(-x));
+            y = 1/(1+ DecimalMath.Exp(-x));
             return y;
         }
-        public static double ReLU(double x)
+        public static decimal ReLU(decimal x)
         {
             if (x > 0)
             {
@@ -25,26 +25,34 @@
                 return 0;
             } 
         }
-        public static double Activation(double x, CalcType type)
+        public static decimal Id(decimal x)
         {
-            if (type == CalcType.Atanh) return Atanh(x);
-            if (type == CalcType.Sigmoid) return Sigmoid(x);
-            if (type == CalcType.ReLU) return ReLU(x);
-            return 0;
+            return x;
+        }
+        public static decimal Activation(decimal x, CalcType type)
+        {
+            return type switch
+            {
+                CalcType.Atanh => Tanh(x),
+                CalcType.Sigmoid => Sigmoid(x),
+                CalcType.ReLU => ReLU(x),
+                CalcType.Id => Id(x),
+                _ => 0,
+            };
         }
         #endregion
         #region Derivetives
-        public static double DAtnh(double x)
+        public static decimal DTanh(decimal x)
         {
-            y = 1 / (1 - System.Math.Pow(x,2));
+            y = DecimalMath.PowerN(1 - Tanh(x),2);
             return y;
         }
-        public static double DSigmoid(double x)
+        public static decimal DSigmoid(decimal x)
         {
-            y = System.Math.Exp(-x) /System.Math.Pow(System.Math.Exp(-x)+1,2);
+            y = DecimalMath.Exp(-x) /DecimalMath.PowerN(DecimalMath.Exp(-x)+1,2);
             return y;
         }
-        public static double DReLU(double x)
+        public static decimal DReLU(decimal x)
         {
             if (x> 0)
             {
@@ -55,12 +63,20 @@
                 return 0;
             }
         }
-        public static double DActivation(double x,CalcType type)
+        public static decimal DId(decimal x)
         {
-            if (type == CalcType.Atanh) return DAtnh(x);
-            if (type == CalcType.Sigmoid) return DSigmoid(x);
-            if (type == CalcType.ReLU) return DReLU(x);
-            return 0;
+            return 1;
+        }
+        public static decimal DActivation(decimal x,CalcType type)
+        {
+            return type switch
+            {
+                CalcType.Atanh => DTanh(x),
+                CalcType.Sigmoid => DSigmoid(x),
+                CalcType.ReLU => DReLU(x),
+                CalcType.Id => DId(x),
+                _ => 0,
+            };
         }
         #endregion
 

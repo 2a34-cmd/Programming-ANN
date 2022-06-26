@@ -45,7 +45,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         //these are dummy varibles
         int calcID, networkID , layerNum, neuronID, from0, from1, to0, to1;
         string network, layer,layername, neuron, state,connoctor;
-        double bias, wieght;
+        decimal bias, wieght;
         Neuron from, to;
         #endregion
         public void CreateANN()
@@ -152,11 +152,11 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
             return data;
         }
         
-        static List<double> Extractdnum(string input)
+        static List<decimal> Extractdnum(string input)
         {
-            List<double> data = new();
+            List<decimal> data = new();
             string parameter = string.Empty;
-            double val = 0;
+            decimal val = 0;
             foreach (char IsDigit in input)
             {
                 if (char.IsDigit(IsDigit) || IsDigit == '-' || IsDigit == '.')
@@ -168,7 +168,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
                     if (parameter == "") continue;
                     try
                     {
-                        val = double.Parse(parameter);
+                        val = decimal.Parse(parameter);
                         data.Add(val);
                     }
                     catch (System.Exception ex) { System.Console.WriteLine(ex.Message); }
