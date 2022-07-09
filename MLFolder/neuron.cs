@@ -1,33 +1,42 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
-//we will put every class in big library and we'll call it "neural network" 
+
 namespace Atomic.ArtificialNeuralNetwork.libraries
 {
-
-    // first construct neuron
-    class Neuron //: IWeightBias
+    //the most important and essential peice of every network: neuron
+    /// <summary>
+    /// class about 
+    /// </summary>
+    class Neuron
     {
         // these are for identifying the neuron
-        public int ID;
-        public int LayerNum;
-        public int NetworkID;
-        public string name;
-        public ConcurrentBag<Path> paths;
-        public List<Connector> Root;
-        // these aren't identifying the neuron
-        public decimal value;
-        public decimal bias;
+        internal int ID;
+        internal int LayerNum;
+        internal int NetworkID;
+        internal string name;
+        //paths keeps track of paths that their from is this neuron
+        internal ConcurrentBag<Path> paths;
+        //Root keeps track of connectors that thier to is this neuron
+        //bot paths and Root are used in Back propagation methods in neural network class
+        internal List<Connector> Root;
+        // value is what neuron holds
+        internal decimal value;
+        //bias is what neuron affect in its calculation of value
+        internal decimal bias;
+        //Der is how much will neuron change its bias
         decimal Der;
-        public decimal Diff { get { return Der; } }
-        CalcType calc;
+        /// <summary>
+        /// returns Der, a private member that stores future bias change
+        /// </summary>
+        internal decimal Diff { get { return Der; }  }
+
+        readonly CalcType calc;
         // the constructer should know the ID of neuron
-        public Neuron(int index, int layerNum, int networkID, decimal bais = 0)
+        internal Neuron(int index, int layerNum, int networkID, decimal bais = 0)
         {
             // here, we make sure there isn't neuron with the same id
             if (NeuronDic.Neurons.ContainsKey(Naming(index, layerNum, networkID)))
             {
-                System.Console.WriteLine($"there is a previous neuron with specified index:{index}" +
+                throw new($"there is a previous neuron with specified index:{index}" +
                     $" and Layer index:{LayerNum} from network:{networkID}.");
             }
             else
@@ -42,23 +51,44 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
                 value = 0m;
                 calc = NetworkDic.Networks[networkID].calcType;
                 name = Naming(ID, LayerNum, NetworkID);
-                Console.WriteLine($"A neuron is constructed with index:{ID} and in Layer:{LayerNum}" +
-                    $" in the network:{NetworkID}");
                 NetworkDic.Networks[NetworkID].neuronList.Add(this);
                 NeuronDic.Neurons.Add(Naming(ID, LayerNum, NetworkID), this);
             }
         }
         //this is for naming neurons
+        /// <summary>
+        /// by supplying the needed parameters, the function returns the unique name of the neuron
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="LayerNum"></param>
+        /// <param name="networkID"></param>
+        /// <returns></returns>
         static string Naming (int index, int LayerNum, int networkID){
             return "neuron" + index + "layer" + LayerNum + "network" + networkID;
         }
         #region Info Methods
-        public void InfoLog() { System.Console.WriteLine($"    neuron{ID}");}
+        /// <summary>
+        /// give info about the neuron's name
+        /// </summary>
+        public void InfoLog() { Console.WriteLine($"    neuron{ID}");}
+        /// <summary>
+        /// gives info about the neuron's value
+        /// </summary>
         public void InfowC() {Console.WriteLine($"    neuron{ID} :{value}");}
+        /// <summary>
+        /// gives info about the neuron's bias
+        /// </summary>
         public void InfowB(){Console.WriteLine($"    neuron{ID} :{bias}"); }
-        public string FileInfo() { return $"nu {ID} : {bias};"; }
+        /// <summary>
+        /// gives info to pass it to configfile so it can be saved
+        /// </summary>
+        /// <returns></returns>
+        internal string FileInfo() { return $"nu {ID} : {bias};"; }
         #endregion
-        public void Calculate()
+        /// <summary>
+        /// change value according to bias and end connections
+        /// </summary>
+        internal void Calculate()
         {
             CalcType type = NetworkDic.Networks[NetworkID].calcType;
             decimal mean = 0;
@@ -70,7 +100,11 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
             value = ActivationFunctions.Activation(mean,type);
             return;
         }
-        public decimal DCalculate()
+        /// <summary>
+        /// calculate the value of needed change according to back propagation algorathim
+        /// </summary>
+        /// <returns></returns>
+        decimal DCalculate()
         {
             CalcType type = NetworkDic.Networks[NetworkID].calcType;
             decimal mean = 0;
@@ -81,13 +115,14 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
             mean += bias;
             return ActivationFunctions.DActivation(mean,type);
         }
-        //need more work
 
-
-        public void Backprop(decimal[] Expected)
+        /// <summary>
+        /// do back propagation algorathim that correspond to this neuron
+        /// </summary>
+        /// <param name="Expected"></param>
+        internal void Backprop(decimal[] Expected)
         {
             if (LayerNum == 0) return;
-            if (NetworkDic.Networks[NetworkID].IsChangable) return;
             decimal Sum = 0;
             if (paths.IsEmpty)
             {
@@ -107,47 +142,28 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
             Der += Sum;
             return;
         }
-        public void DefultingDer() { Der = 0; }
-        public void DivideDer(int PatchSize) { Der /= PatchSize; }
-        //public decimal? BP(decimal[] Expected)
-        //{
-        //    if (LayerNum == 0) return 1;
-        //    if (NetworkDic.Networks[NetworkID].IsChangable) return null;
-        //    decimal Sum = 0;
-        //    if (paths.IsEmpty)
-        //    {
-        //        return 2 * (value - Expected[ID]);
-        //    }
-        //    foreach (Path path in paths)
-        //    {
-        //        decimal Product = 2 * (path.Out.value - Expected[path.Out.ID]);
-        //        foreach (Connector connector in path.connectors)
-        //        {
-        //            Product *= NeuronDic.Neurons[connector.To].DCalculate();
-        //            Product *= connector.GetWieght();
-        //        }
-        //        Sum += Product;
-        //    }
-        //    return Sum;
-        //}
-        //public decimal? BackProp(decimal[] Expected)
-        //{
-        //    if (NetworkDic.Networks[NetworkID].IsChangable) return null;
-        //    decimal Product = Der;
-        //    return Product;
-        //}
-        //public void SetWB(decimal[] Expected)
-        //{
-        //    Backprop(Expected);
-        //    bias -= Der * NetworkDic.Networks[NetworkID].LearningRate;
-        //}
-        public void SetWB(decimal diff)
+        /// <summary>
+        /// change Der to 0
+        /// </summary>
+        internal void DefultingDer() { Der = 0; }
+        /// <summary>
+        /// divide Der on Batchsize
+        /// </summary>
+        /// <param name="PatchSize">the divisor</param>
+        internal void DivideDer(int BatchSize) { Der /= BatchSize; }
+        internal void SetWB(decimal diff)
         {
             bias -= diff;
         }
     }
     // this class is here to count all the neurons
+    /// <summary>
+    /// stores the static meber, Neurons
+    /// </summary>
     class NeuronDic{
-         public static Dictionary<string,Neuron> Neurons = new();
+        /// <summary>
+        /// dictionary that stores every neuron and its name
+        /// </summary>
+         internal static Dictionary<string,Neuron> Neurons = new();
     }
 }

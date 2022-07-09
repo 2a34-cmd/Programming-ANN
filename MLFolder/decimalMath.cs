@@ -1,27 +1,30 @@
-﻿using System;
-namespace Atomic.ArtificialNeuralNetwork.libraries
+﻿namespace Atomic.ArtificialNeuralNetwork.libraries
 {
-    public static class DecimalMath
+    //thanks to raminrahimzada who provided this class
+    //it is modified to suit this project's needs 
+    //this clas is taken from github  page https://github.com/raminrahimzada/CSharp-Helper-Classes/tree/master/Math/DecimalMathhttps://github.com/raminrahimzada/CSharp-Helper-Classes/tree/master/Math/DecimalMath
+    /// <seealso cref="https://github.com/raminrahimzada/CSharp-Helper-Classes/tree/master/Math/DecimalMathhttps://github.com/raminrahimzada/CSharp-Helper-Classes/tree/master/Math/DecimalMath"/>
+    static class DecimalMath
     {
         /// <summary>
         /// represents PI
         /// </summary>
-        public const decimal Pi = 3.14159265358979323846264338327950288419716939937510M;
+        internal const decimal Pi = 3.14159265358979323846264338327950288419716939937510M;
 
         /// <summary>
         /// represents PI
         /// </summary>
-        public const decimal Epsilon = 0.0000000000000000001M;
+        internal const decimal Epsilon = 0.0000000000000000001M;
 
         /// <summary>
         /// represents 2*PI
         /// </summary>
-        public const decimal PIx2 = 6.28318530717958647692528676655900576839433879875021M;
+        internal const decimal PIx2 = 6.28318530717958647692528676655900576839433879875021M;
 
         /// <summary>
         /// represents E
         /// </summary>
-        public const decimal E = 2.7182818284590452353602874713526624977572470936999595749M;
+        internal const decimal E = 2.7182818284590452353602874713526624977572470936999595749M;
 
         /// <summary>
         /// represents PI/2
@@ -46,12 +49,12 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         /// <summary>
         /// Zero
         /// </summary>
-        public const decimal Zero = 0.0M;
+        internal const decimal Zero = 0.0M;
 
         /// <summary>
         /// One
         /// </summary>
-        public const decimal One = 1.0M;
+        internal const decimal One = 1.0M;
 
         /// <summary>
         /// Represents 0.5M
@@ -68,7 +71,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public static decimal Exp(decimal x)
+        internal static decimal Exp(decimal x)
         {
             var count = 0;
 
@@ -106,7 +109,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         /// <param name="value"></param>
         /// <param name="pow"></param>
         /// <returns></returns>
-        public static decimal Power(decimal value, decimal pow)
+        internal static decimal Power(decimal value, decimal pow)
         {
             if (pow == Zero) return One;
             if (pow == One) return value;
@@ -162,7 +165,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         /// <param name="value"></param>
         /// <param name="power"></param>
         /// <returns></returns>
-        public static decimal PowerN(decimal value, int power)
+        internal static decimal PowerN(decimal value, int power)
         {
             while (true)
             {
@@ -198,7 +201,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public static decimal Abs(decimal x)
+        internal static decimal Abs(decimal x)
         {
             if (x <= Zero)
             {
@@ -211,7 +214,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public static decimal Log(decimal x)
+        internal static decimal Log(decimal x)
         {
             if (x <= Zero)
             {
@@ -248,7 +251,7 @@ namespace Atomic.ArtificialNeuralNetwork.libraries
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public static decimal Tanh(decimal x)
+        internal static decimal Tanh(decimal x)
         {
             var y = Exp(x);
             var yy = One / y;
