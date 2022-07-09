@@ -1,0 +1,12 @@
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\bin\Release\net6.0\win-x86\Neural Network Library.deps.json
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\bin\Release\net6.0\win-x86\Neural Network Library.dll
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\bin\Release\net6.0\win-x86\Neural Network Library.pdb
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\Neural Network Library.csproj.AssemblyReference.cache
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\Neural Network Library.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\Neural Network Library.AssemblyInfoInputs.cache
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\Neural Network Library.AssemblyInfo.cs
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\Neural Network Library.csproj.CoreCompileInputs.cache
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\Neural Network Library.dll
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\refint\Neural Network Library.dll
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\Neural Network Library.pdb
+C:\Users\Khtably55\Desktop\NeuralNetwork\Neural Network Library\Neural Network Library\obj\Release\net6.0\win-x86\ref\Neural Network Library.dll

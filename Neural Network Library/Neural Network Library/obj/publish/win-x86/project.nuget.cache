@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "03VYq+24Mq+G1J68s6KYF4L5RYLQlt1ukcHekufE/ttG8ceB0iukdeHb6h+LuYEAHMDJ0sy+08ECvGiAn9Qh+g==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Khtably55\\Desktop\\NeuralNetwork\\Neural Network Library\\Neural Network Library\\Neural Network Library.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Khtably55\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\6.0.6\\microsoft.netcore.app.runtime.win-x86.6.0.6.nupkg.sha512",
+    "C:\\Users\\Khtably55\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x86\\6.0.6\\microsoft.windowsdesktop.app.runtime.win-x86.6.0.6.nupkg.sha512",
+    "C:\\Users\\Khtably55\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x86\\6.0.6\\microsoft.aspnetcore.app.runtime.win-x86.6.0.6.nupkg.sha512"
+  ],
+  "logs": []
+}

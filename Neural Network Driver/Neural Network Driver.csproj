@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Neural_Network_Driver</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Neural Network Library\Neural Network Library\Neural Network Library.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Neural Network Library">
+      <HintPath>..\Neural Network Library\Neural Network Library\bin\Debug\net6.0\Neural Network Library.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

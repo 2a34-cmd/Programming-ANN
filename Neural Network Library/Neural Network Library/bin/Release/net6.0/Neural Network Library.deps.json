@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "Neural Network Library/1.0.0": {
+        "runtime": {
+          "Neural Network Library.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Neural Network Library/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
